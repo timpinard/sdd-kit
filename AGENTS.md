@@ -23,6 +23,9 @@
 4. One task = one PR. Keep diffs reviewable.
 5. If an ADR blocks the approach, stop and report. Do not override.
 6. Log regeneration count in the PR description.
+7. Refer to docs by ID ("ADR NNNN", "Spec NNNN"), not by path. Only ADRs name external systems,
+   repos, files or versions; everything else refers to the ADR. Accepted ADRs are never edited,
+   only superseded, so a stale name in one is history, not rot.
 
 ## Non-goals for agents
 - No dependency additions without an ADR.

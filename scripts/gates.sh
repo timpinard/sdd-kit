@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
+cd "$(dirname "$0")/.."
+echo "== references =="
+DOCS=(AGENTS.md $(find docs -name '*.md'))
+for ref in $(grep -ohE '(ADR|Spec) [0-9]{4}' "${DOCS[@]}" | tr ' ' '_' | sort -u); do
+  kind="${ref%_*}"; id="${ref#*_}"
+  dir=docs/adr; [ "$kind" = Spec ] && dir=docs/specs
+  ls "$dir/$id"-*.md >/dev/null 2>&1 || { echo "Dangling reference: ${kind} ${id}"; exit 1; }
+done
+for path in $(grep -ohE 'docs/[A-Za-z0-9_./-]+\.md' "${DOCS[@]}" | grep -v NNNN | sort -u); do
+  [ -e "$path" ] || { echo "Dangling path: $path"; exit 1; }
+done
 echo "== lint ==";        : # TODO: your lint command
 echo "== typecheck ==";   : # TODO
 echo "== unit ==";        : # TODO
