@@ -10,7 +10,7 @@
 |----|--------------------------------------------|
 | R1 | |
 
-## Acceptance criteria (each maps to 1+ test)
+## Acceptance criteria (each maps to 1+ test, in tests/test_NNNN_*.py)
 | ID | Given / When / Then | Covers | Test name |
 |----|---------------------|--------|-----------|
 | AC1 | | R1 | test_AC1_... |
