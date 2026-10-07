@@ -1,0 +1,13 @@
+{
+  "name": "sdd-kit",
+  "owner": { "name": "Timothy Pinard" },
+  "description": "Local marketplace for the sdd-kit plugin.",
+  "plugins": [
+    {
+      "name": "sdd-kit",
+      "source": "./",
+      "description": "Spec-driven development process: skills for the stages that need a human, agents for the ones that do not.",
+      "category": "engineering"
+    }
+  ]
+}

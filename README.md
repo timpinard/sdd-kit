@@ -1,44 +1,43 @@
-# SDD Kit (stub)
+# sdd-kit
 
-Flow: intent -> spec -> plan -> tasks -> implement -> gates -> review -> merge -> metrics
+A Claude Code plugin for spec-driven development: the owner settles decisions in grilling sessions,
+specs are written from them, work is planned in thin slices and built test-first by agents, and
+nothing merges without the owner.
 
-| Stage     | Artifact                       | Owner (human gate)  | Agent             |
-|-----------|--------------------------------|---------------------|-------------------|
-| Decide    | docs/adr/NNNN-name.md          | Eng (accepts)       | -                 |
-| Intent    | docs/specs/NNNN-name.md        | Product + Eng       | ticket-agent      |
-| Plan      | docs/plans/NNNN-name.md        | Eng (approves)      | planner           |
-| Tasks     | docs/tasks/NNNN-name.md        | Eng (skims)         | planner           |
-| Implement | PR                             | -                   | implementer       |
-| Gates     | scripts/gates.sh               | -                   | implementer + CI  |
-| Review    | PR review                      | Eng (final merge)   | reviewer          |
-| Verify    | acceptance tests               | -                   | qa-agent          |
-| Measure   | metrics/log.csv                | Eng lead            | -                 |
+```
+setup -> epic -> spec -> plan -> build (per task) -> retro
+          PO      grill    slices   implementer -> gates -> spec-reviewer + standards-reviewer -> merge gate
+```
 
-Human gates: accept ADRs, approve spec, approve plan, merge. Everything else is agent-run.
+| Stage | Started with | Artifact | Human gate |
+|-------|--------------|----------|------------|
+| Setup | `/sdd-kit:setup` | AGENTS.md, docs/context/, ADRs, gates.sh, `.sdd-kit` | accept ADRs |
+| Epic | `/sdd-kit:epic` | docs/epics/NNNN | approve epic |
+| Spec | `/sdd-kit:spec` | docs/specs/NNNN | approve spec |
+| Plan | `/sdd-kit:plan` | docs/plans/NNNN, docs/tasks/NNNN | approve plan |
+| Build | `/sdd-kit:build Task NNNN-Tn` | branch, docs/reviews/NNNN-Tn, metrics row | merge |
+| Retro | `/sdd-kit:retro` | docs/retro/, a new kit version | decide each item |
 
-## Adopting the kit in a new project
-1. Copy a tagged release into the new repo: `git -C <kit> archive vX.Y | tar -x -C <project>`,
-   then write the tag into `.sdd-kit`.
-2. Symlink `CLAUDE.md -> AGENTS.md` so Claude Code reads the same rules.
-3. Fill the Project paragraph and Commands in AGENTS.md.
-4. Fill docs/context/ before the first spec: agents read it on every task.
-5. Accept ADR 0001, then record an ADR per stack choice (language, runtime deps, storage).
-   Rule: no dependency without an ADR, so the first dependencies need one too.
-6. Wire `scripts/gates.sh` to real commands. A no-op gate passes everything.
+## Skills and agents
+Skills run in the owner's session, so they can ask questions and wait: every stage that needs a
+human is a skill. Agents run in their own context and report back: work that needs no human
+(implementing, reviewing, adversarial QA) is an agent, dispatched by a skill.
 
-## Process lifecycle
-The kit is the reference implementation of the process. A project copies it once and owns its copy;
-nothing flows into an active project automatically.
-- During a project, problems with the process go into the project's docs/kit-feedback.md, not
-  into the kit.
-- At the end of a milestone, a retro (docs/retro/_template-retro.md) sorts that list into kit
-  changes, project-only changes and drops. Kit changes ship as a tagged release with a
-  CHANGELOG.md entry marked recommended or optional.
-- When new work starts in an existing project (a new spec), `scripts/kit-drift.sh` compares the
-  project's `.sdd-kit` stamp with the kit's latest tag and lists what changed. Adopt or skip each
-  entry, update the stamp, commit listing what was taken. kit-manifest says which files are the
-  kit's to compare; context docs and ADRs are always the project's.
+- Stage skills (owner-started): setup, epic, spec, plan, build, retro
+- Shared skills (used by stages, or by the model when the task fits): grilling, tdd, domain-docs
+- Agents: implementer, spec-reviewer, standards-reviewer, qa-agent
 
-## Running an agent
-Agents are defined in `.claude/agents/`. Claude Code loads them at session start, so open the
-session in the project root and ask for one by name ("use the ticket-agent on: <request>").
+## Install
+```
+claude plugin marketplace add ~/Workspace/sdd-kit
+claude plugin install sdd-kit@sdd-kit --scope project
+```
+Then `/sdd-kit:setup` in the project. Restart the session after installing or updating.
+
+## Versions and change
+The plugin is the reference implementation of the process. A project records the version it
+adopted in `.sdd-kit`; updates reach it only through `claude plugin update`, and each stage skill
+checks the version first and offers the CHANGELOG entries since (adopt or defer). Problems found
+while working go in the project's docs/kit-feedback.md; `/sdd-kit:retro` turns them into a release.
+
+Adapted material: see THIRD_PARTY_NOTICES.md.

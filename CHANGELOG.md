@@ -2,6 +2,60 @@
 Written for adopters. Each entry: what changed, why, and whether to take it
 (recommended = fixes a defect in the process; optional = a new convention).
 
+## v0.2.0 - 2026-10-07
+The kit becomes a Claude Code plugin. Stages that need a human run as skills inside the owner's
+session; stages that do not run as agents. Sources: the whatif-mcp pilot's kit feedback (19 rows)
+and a comparison with github.com/mattpocock/skills.
+
+- recommended: stages are skills - `setup`, `epic`, `spec`, `plan`, `build`, `retro` - started by
+  the owner (`/sdd-kit:spec` and so on). The ticket-agent and planner agents are gone: as subagents
+  they could not ask the owner anything, so open questions came back in rounds through a relay.
+- recommended: `grilling` skill (adapted, MIT): questions in rounds over the frontier of the design
+  tree, each with a recommended answer; facts looked up, decisions asked. Used by every stage skill.
+- recommended: specs are written after the grilling, by synthesis; hand-checked worked numbers,
+  rounding stated, about 25 AC per spec.
+- recommended: plans are vertical slices with blocking edges, agreed seams and a gate command per
+  task; spec gaps resolved as an owner-approved amendment (`Amended:` header).
+- recommended: `tdd` skill (adapted, MIT): red-green one slice at a time at agreed seams, no
+  tautological tests. Replaces "write tests from the AC first", which is horizontal slicing.
+- recommended: review on two axes by two read-only agents in parallel, `spec-reviewer` and
+  `standards-reviewer`, reported unmerged in docs/reviews/NNNN-Tn.md.
+- recommended: `build` skill runs a task end to end: branch, implementer, gates, both reviews, owner
+  merge gate, metrics row, spec Status: implemented on the last task, optional qa-agent pass.
+- recommended: gates.sh takes AC ids after the spec (`gates.sh <spec> AC3 AC4`) so each task checks
+  its own AC; a test level with no tests is a printed skip (`tests_at_level`), not a failure; one
+  command per line; references gate also resolves Epic and Plan ids.
+- recommended: `epic` skill and template: the PO stage, before specs.
+- optional: `domain-docs` skill: glossary and ADRs updated during grilling; reference by ID; only
+  ADRs name external systems (the product's own interface is not external); `Jira:` header lines;
+  partial supersession `accepted; <part> superseded by NNNN`.
+- optional: docs/context/tracker.md maps artifacts and gates to tracker issues and transitions.
+- optional: templates gain Approved by / Amended / Epic / Jira lines (spec), Seams, Spec gaps and
+  Test layout (plan), Slice / Blocked by / Gate command columns and Task notes (tasks), and a
+  "Numbers: precision and rounding" prompt (spec, conventions).
+- optional: metrics row written at the merge gate, when every column is known; who fills each
+  column is in the retro skill's metrics.md.
+- Dropped: kit-manifest and scripts/kit-drift.sh (process files now live in the plugin; the
+  version check runs at the start of each stage skill).
+
+### Migration from 0.1.x
+1. `claude plugin marketplace add <path to sdd-kit>`, then
+   `claude plugin install sdd-kit@sdd-kit --scope project`.
+2. Delete the copied process files: `.claude/agents/` (ticket-agent, planner, implementer,
+   reviewer, qa-agent), `docs/specs/_template-spec.md`, `docs/plans/_template-plan.md`,
+   `docs/tasks/_template-tasks.md`, `docs/adr/0000-template.md`, `docs/retro/_template-retro.md`,
+   `docs/epics/_template-epic.md`, `docs/gates.md`, `docs/definition-of-done.md`,
+   `.github/pull_request_template.md`, `metrics/README.md`, `scripts/kit-drift.sh`.
+3. AGENTS.md: replace Rules and add Process from `skills/setup/project/AGENTS.md`; keep Project
+   and Commands.
+4. scripts/gates.sh: take the references, `tests_at_level` and AC coverage parts from
+   `skills/setup/project/gates.sh`; keep the project's commands.
+5. Add docs/context/tracker.md (an existing Jira mapping moves there); add "Numbers and precision"
+   and the Testing seams to conventions.md.
+6. Record the retro decisions on the existing docs/kit-feedback.md rows.
+7. Tasks not yet started: re-plan them with `/sdd-kit:plan`. Merged tasks stand.
+8. Write `0.2.0` to `.sdd-kit`.
+
 ## v0.1 - 2026-10-06
 Found while starting the whatif-mcp pilot.
 - recommended: AC coverage gate only checks `tests/test_NNNN_*.py` for spec NNNN and requires a
