@@ -1,5 +1,5 @@
 # Gates (cheapest first; scripts/gates.sh in the project)
-0. References: every ADR/Epic/Spec/Plan id and docs/ path mentioned resolves
+0. References: every ADR/Epic/Spec/Plan id and docs/ path mentioned in living docs resolves (dated records are skipped)
 1. Format + lint
 2. Type check
 3. Unit tests (no tests at a level yet is a printed skip, not a failure)

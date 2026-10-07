@@ -13,6 +13,10 @@ description: Keep the glossary and ADRs current as decisions are made. Use when 
 - Accepted ADRs are never edited except the status line. A changed decision is a new ADR; the old one becomes `superseded by NNNN`, or `accepted; <part> superseded by NNNN` when only part changes.
 
 ## References
-- Living docs (context, epics, specs, plans, tasks, reviews) refer to each other by ID: "ADR 0004", "Spec 0002", "Plan 0001", "Task 0001-T3".
-- External systems, other repositories, their paths and versions are named only inside ADRs. The product's own interface (its file paths, env vars, tool names) is not external.
+- Living docs (AGENTS.md, context, epics, specs, plans, tasks) refer to each other by ID: "ADR 0004", "Spec 0002", "Plan 0001", "Task 0001-T3".
+- External systems, other repositories, their paths and versions are named only in ADRs and in
+  dated records. The product's own interface (its file paths, env vars, tool names) is not external.
+- Dated records describe a point in time and are not kept current: ADRs, review records
+  (docs/reviews/), retros (docs/retro/) and docs/kit-feedback.md. They may name versions and paths
+  that later change; the references gate skips them (ADRs are checked only as targets).
 - A tracker key goes on a `Jira:` (or `Tracker:`) header line.

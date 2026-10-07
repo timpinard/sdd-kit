@@ -2,7 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 echo "== references =="
-DOCS=(AGENTS.md $(find docs -name '*.md'))
+# Dated records (reviews, retros, kit feedback) describe a point in time and are not checked.
+DOCS=(AGENTS.md $(find docs -name '*.md' -not -path 'docs/reviews/*' -not -path 'docs/retro/*' -not -name 'kit-feedback.md'))
 for ref in $(grep -ohE '(ADR|Epic|Spec|Plan) [0-9]{4}' "${DOCS[@]}" | tr ' ' '_' | sort -u); do
   kind="${ref%_*}"; id="${ref#*_}"
   case "$kind" in ADR) dir=docs/adr ;; Epic) dir=docs/epics ;; Spec) dir=docs/specs ;; Plan) dir=docs/plans ;; esac

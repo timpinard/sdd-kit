@@ -13,7 +13,7 @@ Spec-driven, with the sdd-kit plugin (version in `.sdd-kit`). Stages: epic -> sp
 - docs/adr/ (accepted ADRs are binding)
 
 ## Commands
-- Setup: `<cmd>`
+- Setup: `<cmd>` (and the sdd-kit marketplace add, when the kit has no git remote)
 - Gates: `scripts/gates.sh [docs/specs/NNNN-name.md [AC ids...]]`
 
 ## Rules

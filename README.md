@@ -33,6 +33,8 @@ claude plugin marketplace add ~/Workspace/sdd-kit
 claude plugin install sdd-kit@sdd-kit --scope project
 ```
 Then `/sdd-kit:setup` in the project. Restart the session after installing or updating.
+A local marketplace path works on this machine only; once the kit has a git remote, setup records it
+in the project's `.claude/settings.json` so other machines resolve it.
 
 ## Versions and change
 The plugin is the reference implementation of the process. A project records the version it

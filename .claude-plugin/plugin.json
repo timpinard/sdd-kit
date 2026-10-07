@@ -1,6 +1,6 @@
 {
   "name": "sdd-kit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Spec-driven development: grill, specify, plan in thin slices, build test-first, review on two axes, with human gates at ADRs, specs, plans and merges.",
   "author": { "name": "Timothy Pinard" },
   "license": "MIT",

@@ -32,6 +32,11 @@ From `project/`, with the decisions filled in:
 - `docs/kit-feedback.md`, `metrics/log.csv`
 - `.sdd-kit` containing this plugin's version
 Install the plugin for the project if it is not: `claude plugin install sdd-kit@sdd-kit --scope project`.
+That records the plugin in `.claude/settings.json`, but not where its marketplace lives. When the
+sdd-kit repository has a git remote, add it to the same file so any machine can resolve it:
+`"extraKnownMarketplaces": {"sdd-kit": {"source": {"source": "git", "url": "<remote url>"}}}`.
+Without a remote, commit no local path; add the step
+`claude plugin marketplace add <path to sdd-kit>` to the Setup command in AGENTS.md instead.
 
 ## 4. Gate
 Show the owner the ADRs. Done when the owner has accepted (or rejected) each ADR, `scripts/gates.sh`

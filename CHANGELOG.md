@@ -2,6 +2,24 @@
 Written for adopters. Each entry: what changed, why, and whether to take it
 (recommended = fixes a defect in the process; optional = a new convention).
 
+## v0.2.1 - 2026-10-07
+Found while migrating whatif-mcp to 0.2.0.
+- recommended: the references gate skips dated records (docs/reviews/, docs/retro/,
+  docs/kit-feedback.md). It failed on a kit-feedback row naming a template the migration deleted;
+  editing a record to satisfy the gate is the wrong direction.
+- recommended: `domain-docs` classes reviews, retros and kit feedback as dated records, like ADRs:
+  they may name versions and paths. A standards review had flagged an SDK version in a review record.
+- optional: `setup` declares the sdd-kit marketplace in the project's `.claude/settings.json` when
+  the kit has a git remote, and otherwise documents `claude plugin marketplace add` in AGENTS.md
+  instead of committing a machine-specific path.
+
+### Migration from 0.2.0
+1. scripts/gates.sh: replace the `DOCS=(...)` line with the one in
+   `skills/setup/project/gates.sh` (with its one-line comment).
+2. Without a git remote for sdd-kit: add the marketplace step to AGENTS.md's Setup command. With
+   one: add `extraKnownMarketplaces` to `.claude/settings.json` as the setup skill describes.
+3. Write `0.2.1` to `.sdd-kit`.
+
 ## v0.2.0 - 2026-10-07
 The kit becomes a Claude Code plugin. Stages that need a human run as skills inside the owner's
 session; stages that do not run as agents. Sources: the whatif-mcp pilot's kit feedback (19 rows)
