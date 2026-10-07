@@ -34,7 +34,9 @@ Done when the branch is merged and the metrics row and task status are committed
 
 ## 5. Last task of a spec
 Run `scripts/gates.sh <spec>` with no AC list. When green, set the spec's Status: implemented and
-offer the owner a `qa-agent` pass; its findings beyond the AC become Bugs or proposed spec
-amendments, never silent fixes.
+offer QA a `qa-agent` pass, steered to the areas QA names. QA classes each finding: a bug against
+the spec becomes a Bug and a fix task; a gap in the spec becomes a proposed amendment for the
+spec's owners. Neither becomes a silent fix. QA then runs the epic's acceptance walkthrough with
+the product owner once the epic's Must specs are implemented.
 
 Definition of done: `definition-of-done.md` beside this file.

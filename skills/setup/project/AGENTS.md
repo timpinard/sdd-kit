@@ -6,7 +6,8 @@
 ## Process
 Spec-driven, with the sdd-kit plugin (version in `.sdd-kit`). Stages: epic -> spec -> plan -> build
 -> merge, each started with its skill (`/sdd-kit:epic`, `/sdd-kit:spec`, `/sdd-kit:plan`,
-`/sdd-kit:build`). Human gates: accept ADRs, approve epic, approve spec, approve plan, merge.
+`/sdd-kit:build`). Human gates: accept ADRs, approve epic, approve spec (QA signs off the AC), approve plan, merge,
+QA findings (bug or spec gap).
 
 ## Read before any task
 - docs/context/architecture.md, docs/context/conventions.md, docs/context/glossary.md

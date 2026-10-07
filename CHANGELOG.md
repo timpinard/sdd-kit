@@ -2,6 +2,24 @@
 Written for adopters. Each entry: what changed, why, and whether to take it
 (recommended = fixes a defect in the process; optional = a new convention).
 
+## v0.2.2 - 2026-10-07
+- recommended: QA is a named human role. The spec skill brings QA into the grilling (boundaries,
+  bad input, failure modes, exact errors) and requires QA's sign-off that every AC is testable
+  before approval; `Approved by:` names the product owner, engineer and QA. The plan skill has QA
+  review what each seam misses. The build skill offers the qa-agent pass to QA, steered to the
+  areas QA names, and QA classes each finding as a bug (Bug and fix task) or a spec gap (proposed
+  amendment); QA runs the epic walkthrough with the product owner. The retro skill has QA trace
+  each escaped bug to the AC that should have caught it.
+- optional: docs/operating-model.html, the human side of the process: roles, gates, artifacts,
+  data flow, the per-task decision tree and the Jira mapping.
+
+### Migration from 0.2.1
+1. AGENTS.md, Process: replace the human gates line with the one in
+   `skills/setup/project/AGENTS.md`.
+2. docs/context/tracker.md: the QA finding row is confirmed by QA.
+3. Specs approved from now on name QA on the `Approved by:` line.
+4. Write `0.2.2` to `.sdd-kit`.
+
 ## v0.2.1 - 2026-10-07
 Found while migrating whatif-mcp to 0.2.0.
 - recommended: the references gate skips dated records (docs/reviews/, docs/retro/,

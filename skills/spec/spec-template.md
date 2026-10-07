@@ -1,7 +1,7 @@
 # Spec NNNN: <capability>
 - Status: draft | approved | implemented | drifted
 - Owner:
-- Approved by:
+- Approved by: <product owner>, <engineer>, <QA: AC sign-off>, <date>
 - Amended: <date, by whom, which R ids> (only after approval)
 - Epic: Epic NNNN
 - Jira:

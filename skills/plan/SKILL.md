@@ -15,7 +15,8 @@ so they stay easy, without planning them).
 
 ## 2. Seams
 Propose the seams where tests observe behavior, each with what it catches and misses. Prefer
-existing seams and the highest one that works. Agree them with the owner before slicing.
+existing seams and the highest one that works. Agree them with the engineer before slicing; QA
+reviews what each seam misses, and a behavior no seam can observe is a plan gap.
 
 ## 3. Slice
 Draft **slices**: each a thin path through every layer it needs, verifiable on its own, one session,

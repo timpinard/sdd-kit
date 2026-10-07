@@ -110,7 +110,7 @@ td.t-old { color: var(--muted); }
 <div class="wrap">
 
 <header>
-  <div class="eyebrow">sdd-kit 0.2.1 &middot; process reference &middot; source: docs/operating-model.html in the sdd-kit repo</div>
+  <div class="eyebrow">sdd-kit 0.2.2 &middot; process reference &middot; source: docs/operating-model.html in the sdd-kit repo</div>
   <h1>sdd-kit Operating Model</h1>
   <p class="lede">Work moves through nine logical zones. In each one a person decides, a skill or an agent does the work, the repository records the result, and Jira mirrors the status. The repository is the source of truth; Jira is a view of it for people who do not read the repo.</p>
   <div class="legend" aria-label="Legend">
@@ -331,7 +331,6 @@ td.t-old { color: var(--muted); }
       </tbody>
     </table>
   </div>
-  <p class="prose muted">In the kit as of 0.2.1 the skills address "the owner" at these points; QA is the person who holds the owner's hat for the AC sign-off and the Verify zone. Naming QA explicitly in the spec and build skills is a candidate for the next kit release.</p>
 </section>
 
 <section id="gates">
@@ -509,11 +508,11 @@ flowchart TD
 
 <section id="old">
   <div class="eyebrow">Supplanting the original flow</div>
-  <h2>Original stub flow against 0.2.1</h2>
+  <h2>Original stub flow against 0.2.2</h2>
   <p class="prose">The original flow was <span class="mono">intent -&gt; spec -&gt; plan -&gt; tasks -&gt; implement -&gt; gates -&gt; review -&gt; merge -&gt; metrics</span>, with an agent per stage. The zones are almost the same; what changed is who runs each one and where the human sits.</p>
   <div class="scroll" role="region" aria-label="Comparison table, scrolls sideways" tabindex="0">
     <table>
-      <thead><tr><th scope="col">Zone</th><th scope="col">Original stub</th><th scope="col">0.2.1</th><th scope="col">Why it changed</th></tr></thead>
+      <thead><tr><th scope="col">Zone</th><th scope="col">Original stub</th><th scope="col">0.2.2</th><th scope="col">Why it changed</th></tr></thead>
       <tbody>
         <tr><th scope="row">Foundation</th><td class="t-old">Copy the kit; nothing said how</td><td><code>setup</code> skill interviews, writes context docs and stack ADRs, stamps the version</td><td>The pilot's setup was done by hand from memory</td></tr>
         <tr><th scope="row">Intent</th><td class="t-old">ticket-agent, straight to a spec</td><td><code>epic</code> skill with the PO, before any spec</td><td>No PO artifact existed; it had to be reconstructed</td></tr>
