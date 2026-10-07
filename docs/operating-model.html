@@ -1,0 +1,560 @@
+<title>sdd-kit Operating Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column for prose, full-width scroll panes for the zone map and tables. Lanes are color-coded by who acts. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #1c2330;
+  --muted: #5b6577;
+  --line: #d8dde6;
+  --human: #b45309;
+  --human-bg: #fdf3e4;
+  --skill: #0f766e;
+  --skill-bg: #e3f4f1;
+  --agent: #6d28d9;
+  --agent-bg: #efe9fb;
+  --repo: #334155;
+  --repo-bg: #eceff3;
+  --jira: #1d4ed8;
+  --jira-bg: #e5edfc;
+  --gate: #b91c1c;
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a2029; --fg: #e4e8ef; --muted: #9aa4b5; --line: #2e3643;
+    --human: #f0a24a; --human-bg: #33261a; --skill: #4fd1c0; --skill-bg: #15302d;
+    --agent: #b69cf5; --agent-bg: #261f3b; --repo: #b8c3d4; --repo-bg: #232a35;
+    --jira: #86a8f7; --jira-bg: #1b2643; --gate: #f2766d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e4e8ef; --muted: #9aa4b5; --line: #2e3643;
+  --human: #f0a24a; --human-bg: #33261a; --skill: #4fd1c0; --skill-bg: #15302d;
+  --agent: #b69cf5; --agent-bg: #261f3b; --repo: #b8c3d4; --repo-bg: #232a35;
+  --jira: #86a8f7; --jira-bg: #1b2643; --gate: #f2766d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15.5px; line-height: 1.6; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 80px; display: grid; gap: 56px; }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 4.5vw, 2.9rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.65rem; font-weight: 600; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+p { margin: 0; }
+section { display: grid; gap: 18px; min-width: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.12rem; color: var(--fg); max-width: 68ch; }
+.muted { color: var(--muted); }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+code { background: var(--repo-bg); padding: 1px 5px; border-radius: 3px; }
+header { display: grid; gap: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.85rem; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.sw.human { background: var(--human); } .sw.skill { background: var(--skill); } .sw.agent { background: var(--agent); }
+.sw.repo { background: var(--repo); } .sw.jira { background: var(--jira); }
+.gate-mark { width: 11px; height: 11px; background: var(--gate); transform: rotate(45deg); display: inline-block; flex: none; }
+
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+thead th { font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; background: var(--bg); position: sticky; top: 0; }
+tbody tr:last-child td, tbody tr:last-child th { border-bottom: 0; }
+
+.zonemap { min-width: 1180px; table-layout: fixed; }
+.zonemap thead th { text-align: left; }
+.zonemap thead th .num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); display: block; font-weight: 400; }
+.zonemap th.lane { width: 112px; font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; }
+.zonemap td { font-size: 0.82rem; line-height: 1.45; }
+.zonemap td ul { margin: 0; padding-left: 15px; }
+.lane-human th.lane { color: var(--human); } .lane-human td { background: var(--human-bg); }
+.lane-skill th.lane { color: var(--skill); } .lane-skill td { background: var(--skill-bg); }
+.lane-agent th.lane { color: var(--agent); } .lane-agent td { background: var(--agent-bg); }
+.lane-repo th.lane { color: var(--repo); } .lane-repo td { background: var(--repo-bg); }
+.lane-jira th.lane { color: var(--jira); } .lane-jira td { background: var(--jira-bg); }
+.gate { display: flex; gap: 7px; align-items: baseline; font-weight: 600; color: var(--gate); margin-top: 6px; }
+.gate .gate-mark { width: 8px; height: 8px; transform: rotate(45deg) translateY(-1px); }
+.none { color: var(--muted); font-style: italic; }
+
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.role { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.role h3 { display: flex; align-items: center; gap: 8px; }
+.role.h h3 { color: var(--human); } .role.a h3 { color: var(--agent); }
+.role ul { margin: 0; padding-left: 17px; font-size: 0.88rem; }
+.role .k { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
+figcaption { font-size: 0.86rem; color: var(--muted); max-width: 80ch; }
+.fig-pane { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; overflow-x: auto; }
+.fig-pane svg { display: block; width: 100%; height: auto; min-width: 640px; }
+pre.mermaid { margin: 0; background: transparent; text-align: center; min-width: 560px; }
+
+.status { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.status > div { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; min-width: 0; }
+.status ul { margin: 8px 0 0; padding-left: 17px; font-size: 0.9rem; }
+.pill { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; }
+.pill.ok { color: var(--skill); } .pill.todo { color: var(--human); }
+.toc { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.88rem; }
+.toc a { color: var(--fg); text-decoration-color: var(--line); text-underline-offset: 3px; }
+.toc a:hover, .toc a:focus-visible { text-decoration-color: var(--fg); }
+a:focus-visible { outline: 2px solid var(--jira); outline-offset: 2px; }
+td.t-old { color: var(--muted); }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">sdd-kit 0.2.1 &middot; process reference &middot; source: docs/operating-model.html in the sdd-kit repo</div>
+  <h1>sdd-kit Operating Model</h1>
+  <p class="lede">Work moves through nine logical zones. In each one a person decides, a skill or an agent does the work, the repository records the result, and Jira mirrors the status. The repository is the source of truth; Jira is a view of it for people who do not read the repo.</p>
+  <div class="legend" aria-label="Legend">
+    <span><i class="sw human"></i>Human role and decision</span>
+    <span><i class="sw skill"></i>Skill: runs in your Claude session, can ask you questions</span>
+    <span><i class="sw agent"></i>Agent: runs in its own context, reports back</span>
+    <span><i class="sw repo"></i>Repository artifact (source of truth)</span>
+    <span><i class="sw jira"></i>Jira artifact (mirror)</span>
+    <span><i class="gate-mark"></i>Human gate</span>
+  </div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#places">Three places</a><a href="#map">Zone map</a><a href="#roles">Roles</a><a href="#qa">The QA role</a><a href="#gates">Gates</a>
+    <a href="#flow">Artifact flow</a><a href="#decisions">Decision tree</a><a href="#jira">Jira artifacts</a><a href="#old">Old flow vs new</a><a href="#status">What is proven</a>
+  </nav>
+</header>
+
+<section id="places">
+  <div class="eyebrow">Physical layer</div>
+  <h2>Three places where work happens</h2>
+  <p class="prose">Every step happens in one of three places. Knowing which place a thing lives in answers most "where do I look" questions: a decision is made in a session, written to the repo, and mirrored to Jira. Nothing flows back from Jira into the repo.</p>
+  <figure>
+    <div class="fig-pane">
+      <svg viewBox="0 0 900 300" role="img" aria-label="The Claude session writes decisions to the repository; the repository is mirrored one way to Jira; agents read from and write to the repository on a branch.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+        </defs>
+        <g font-family="IBM Plex Sans, system-ui, sans-serif" font-size="13" fill="currentColor">
+          <rect x="20" y="40" width="250" height="210" rx="6" fill="none" stroke-width="1.5" style="stroke:var(--skill)"/>
+          <text x="36" y="66" font-weight="600" font-size="14" style="fill:var(--skill)">Your Claude session</text>
+          <text x="36" y="92">Stage skills: setup, epic,</text>
+          <text x="36" y="110">spec, plan, build, retro</text>
+          <text x="36" y="136">Shared skills: grilling,</text>
+          <text x="36" y="154">tdd, domain-docs</text>
+          <text x="36" y="186" font-weight="600" style="fill:var(--human)">You answer questions</text>
+          <text x="36" y="204" font-weight="600" style="fill:var(--human)">and pass gates here</text>
+
+          <rect x="330" y="40" width="250" height="210" rx="6" fill="none" stroke-width="1.5" style="stroke:var(--repo)"/>
+          <text x="346" y="66" font-weight="600" font-size="14" style="fill:var(--repo)">Repository (truth)</text>
+          <text x="346" y="92">AGENTS.md, docs/context/</text>
+          <text x="346" y="110">ADRs, epics, specs</text>
+          <text x="346" y="128">plans, tasks, reviews</text>
+          <text x="346" y="146">code, tests, gates.sh</text>
+          <text x="346" y="164">metrics, kit feedback</text>
+          <text x="346" y="200" class="mono" font-size="12">main + task/NNNN-Tn</text>
+          <text x="346" y="218" class="mono" font-size="12">branches</text>
+
+          <rect x="640" y="40" width="240" height="210" rx="6" fill="none" stroke-width="1.5" style="stroke:var(--jira)"/>
+          <text x="656" y="66" font-weight="600" font-size="14" style="fill:var(--jira)">Jira (mirror)</text>
+          <text x="656" y="92">Epic</text>
+          <text x="656" y="110">Story per spec</text>
+          <text x="656" y="128">Sub-task per task</text>
+          <text x="656" y="146">Bug</text>
+          <text x="656" y="178">Status and ownership</text>
+          <text x="656" y="196">for people outside</text>
+          <text x="656" y="214">the repo</text>
+
+          <line x1="270" y1="120" x2="326" y2="120" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="298" y="110" text-anchor="middle" font-size="12">writes</text>
+          <line x1="580" y1="120" x2="636" y2="120" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="608" y="110" text-anchor="middle" font-size="12">mirrors</text>
+          <line x1="636" y1="170" x2="584" y2="170" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+          <text x="610" y="190" text-anchor="middle" font-size="12">key only</text>
+
+          <rect x="330" y="268" width="250" height="26" rx="4" style="fill:var(--agent-bg);stroke:var(--agent)"/>
+          <text x="455" y="286" text-anchor="middle" font-size="12" font-weight="600" style="fill:var(--agent)">Agents read and commit on a branch</text>
+          <line x1="145" y1="250" x2="145" y2="281" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="145" y1="281" x2="326" y2="281" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="236" y="274" text-anchor="middle" font-size="12">build dispatches</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>One-way mirror: skills write to the repository, the repository's state is copied to Jira, and only the issue key comes back (onto each doc's <code>Jira:</code> line). Agents never talk to you directly; the build skill dispatches them and relays their reports.</figcaption>
+  </figure>
+</section>
+
+<section id="map">
+  <div class="eyebrow">Logical zones x physical lanes</div>
+  <h2>The zone map</h2>
+  <p class="prose">Read a column to see everything that happens in one zone. Read a row to see one kind of actor or artifact across the whole lifecycle. Zones 4 to 7 repeat once per task; the rest happen once per epic, spec or milestone.</p>
+  <div class="scroll" role="region" aria-label="Zone map, scrolls sideways" tabindex="0">
+    <table class="zonemap">
+      <thead>
+        <tr>
+          <th class="lane" scope="col"></th>
+          <th scope="col"><span class="num">Z0 &middot; once per repo</span>Foundation</th>
+          <th scope="col"><span class="num">Z1 &middot; per epic</span>Intent</th>
+          <th scope="col"><span class="num">Z2 &middot; per capability</span>Specify</th>
+          <th scope="col"><span class="num">Z3 &middot; per spec</span>Plan</th>
+          <th scope="col"><span class="num">Z4 &middot; per task</span>Implement + gates</th>
+          <th scope="col"><span class="num">Z5 &middot; per task</span>Review</th>
+          <th scope="col"><span class="num">Z6 &middot; per task</span>Merge</th>
+          <th scope="col"><span class="num">Z7 &middot; per spec</span>Verify</th>
+          <th scope="col"><span class="num">Z8 &middot; per milestone</span>Measure + learn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="lane-human">
+          <th class="lane" scope="row">Human</th>
+          <td>Tech lead answers setup questions; accepts or rejects each ADR.<div class="gate"><i class="gate-mark"></i>Accept ADRs</div></td>
+          <td>Product owner is grilled on problem, outcome, measures, scope.<div class="gate"><i class="gate-mark"></i>Approve epic</div></td>
+          <td>PO and engineer answer the grilling; QA adds failure modes and checks every AC can be tested.<div class="gate"><i class="gate-mark"></i>Approve spec (QA signs off the AC)</div></td>
+          <td>Engineer agrees seams, slice size and blocking edges; QA checks what each seam misses; spec gaps answered.<div class="gate"><i class="gate-mark"></i>Approve plan (+ any spec amendment)</div></td>
+          <td>Nobody, unless the implementer stops on a spec conflict or blocking ADR.</td>
+          <td>Nobody: both reviews run unattended.</td>
+          <td>Engineer reads gate output and both reviews; merges, sends back, or waives with a reason.<div class="gate"><i class="gate-mark"></i>Merge</div></td>
+          <td>QA steers the qa-agent, decides each finding (bug or spec gap), and runs the epic walkthrough with the PO.</td>
+          <td>QA traces escaped bugs to the AC that missed them; tech lead decides each feedback item: kit change, project only, drop.<div class="gate"><i class="gate-mark"></i>Retro decisions</div></td>
+        </tr>
+        <tr class="lane-skill">
+          <th class="lane" scope="row">Skill</th>
+          <td><code>setup</code> + <code>grilling</code> + <code>domain-docs</code></td>
+          <td><code>epic</code> + <code>grilling</code></td>
+          <td><code>spec</code> + <code>grilling</code> + <code>domain-docs</code></td>
+          <td><code>plan</code> + <code>grilling</code></td>
+          <td><code>build</code> (steps 1-2): cuts branch, dispatches implementer, re-runs gates</td>
+          <td><code>build</code> (step 3): dispatches both reviewers in parallel</td>
+          <td><code>build</code> (step 4): merge, task status, metrics row</td>
+          <td><code>build</code> (step 5) on the last task: full gates, offers QA</td>
+          <td><code>retro</code> + <code>grilling</code></td>
+        </tr>
+        <tr class="lane-agent">
+          <th class="lane" scope="row">Agent</th>
+          <td class="none">none</td>
+          <td class="none">none</td>
+          <td>Optional lookups during grilling (facts, never decisions)</td>
+          <td class="none">none</td>
+          <td><code>implementer</code>, using <code>tdd</code> at the agreed seams</td>
+          <td><code>spec-reviewer</code> and <code>standards-reviewer</code>, read-only</td>
+          <td><code>implementer</code> again on rework</td>
+          <td><code>qa-agent</code>, adversarial, writes nothing to the repo</td>
+          <td class="none">none</td>
+        </tr>
+        <tr class="lane-repo">
+          <th class="lane" scope="row">Repo</th>
+          <td>AGENTS.md, CLAUDE.md, docs/context/*, ADR 0001+, gates.sh, .sdd-kit, plugin in .claude/settings.json</td>
+          <td>docs/epics/NNNN</td>
+          <td>docs/specs/NNNN; glossary rows; new ADRs (proposed)</td>
+          <td>docs/plans/NNNN, docs/tasks/NNNN; spec <code>Amended:</code> line</td>
+          <td>Branch <code>task/NNNN-Tn</code>: code, tests, review record (implementer + gates sections)</td>
+          <td>Review record: spec review, standards review (unmerged)</td>
+          <td>Merge commit on main; review record owner decision; task row done; metrics row</td>
+          <td>Spec Status: implemented; proposed amendments</td>
+          <td>docs/retro/DATE; kit-feedback decisions; new sdd-kit release (separate repo)</td>
+        </tr>
+        <tr class="lane-jira">
+          <th class="lane" scope="row">Jira</th>
+          <td>Project and key format chosen (recorded in tracker.md)</td>
+          <td><b>Epic</b> created at approval</td>
+          <td><b>Story</b> under the epic: Draft, then Ready at approval</td>
+          <td><b>Sub-tasks</b> with Blocked-by links; Story to Planned</td>
+          <td>Sub-task: In progress</td>
+          <td>Sub-task: In review</td>
+          <td>Sub-task: Done (or back to In progress on rework)</td>
+          <td>Story: Done. <b>Bug</b> per confirmed finding</td>
+          <td>Bugs labelled <code>escaped</code> feed the escape rate</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="roles">
+  <div class="eyebrow">Who decides, who does</div>
+  <h2>Roles</h2>
+  <p class="prose">Four human roles hold every decision. One person can hold several (on a solo project, one person holds all four), but the hats stay distinct because each gate needs a specific one. Four agents do work that needs no decision.</p>
+  <div class="roles">
+    <div class="role h">
+      <h3>Product owner</h3>
+      <div class="k">Owns</div>
+      <ul><li>The epic: problem, outcome, success measures, priorities</li><li>The "why" and the scenarios in each spec</li></ul>
+      <div class="k">Gates</div>
+      <ul><li>Approve epic</li><li>Approve spec (with the engineer)</li></ul>
+    </div>
+    <div class="role h">
+      <h3>Engineer</h3>
+      <div class="k">Owns</div>
+      <ul><li>Behavior and acceptance criteria in the spec</li><li>Seams, slices and blocking edges in the plan</li><li>Each merge to main</li></ul>
+      <div class="k">Gates</div>
+      <ul><li>Approve spec (with the PO and QA), approve plan, merge</li></ul>
+    </div>
+    <div class="role h">
+      <h3>QA</h3>
+      <div class="k">Owns</div>
+      <ul><li>Whether the AC define "done" well enough to test</li><li>Verification beyond the AC, steering the qa-agent</li><li>The escape rate and what it says about the specs</li></ul>
+      <div class="k">Gates</div>
+      <ul><li>Sign off the AC at spec approval</li><li>Decide each QA finding: bug or spec gap</li></ul>
+    </div>
+    <div class="role h">
+      <h3>Tech lead</h3>
+      <div class="k">Owns</div>
+      <ul><li>Context docs and the glossary</li><li>Architecture decisions (ADRs)</li><li>The kit version the project runs and its retros</li></ul>
+      <div class="k">Gates</div>
+      <ul><li>Accept ADRs</li><li>Retro decisions; adopt or defer a kit release</li></ul>
+    </div>
+    <div class="role a">
+      <h3>Agents</h3>
+      <div class="k">Do, never decide</div>
+      <ul><li><b>implementer</b>: one task on its branch, test-first, until its gate command is green</li><li><b>spec-reviewer</b>: diff against spec and plan</li><li><b>standards-reviewer</b>: diff against conventions and ADRs</li><li><b>qa-agent</b>: tries to break a finished spec</li></ul>
+      <div class="k">Stop and report when</div>
+      <ul><li>Spec and code cannot both be right; an ADR blocks; a seam or dependency is missing</li></ul>
+    </div>
+  </div>
+</section>
+
+<section id="qa">
+  <div class="eyebrow">Changed role</div>
+  <h2>The QA role: from executing tests to defining done</h2>
+  <p class="prose">In this process the implementer writes the automated tests, one per AC, red first, and the gates run them on every task. QA no longer executes or scripts tests task by task. The work moves to both ends: before code, making sure the acceptance criteria are the right ones and testable; after code, attacking what the criteria did not cover and learning from what escaped.</p>
+  <div class="scroll" role="region" aria-label="QA expectations table, scrolls sideways" tabindex="0">
+    <table>
+      <thead><tr><th scope="col">Zone</th><th scope="col">Before</th><th scope="col">With sdd-kit</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Specify</th><td class="t-old">Receives requirements after they are written</td><td>Sits in the grilling: raises boundaries, bad input, failure modes and error messages, so they become AC instead of later bugs. Signs off that every AC is concrete enough to test (inputs, observable outputs, exact errors) and that worked numbers are hand-checked.</td></tr>
+        <tr><th scope="row">Plan</th><td class="t-old">Writes a test plan from the requirements</td><td>Reviews the seams: for each, what it catches and what it misses. A behavior no seam can observe is raised as a plan gap.</td></tr>
+        <tr><th scope="row">Implement + review</th><td class="t-old">Writes and runs test cases per story</td><td>Nothing per task. The implementer writes the tests; spec-reviewer flags tests that are stubs, tautological or at the wrong seam. QA reads those findings when they recur.</td></tr>
+        <tr><th scope="row">Verify</th><td class="t-old">Regression and exploratory passes before release</td><td>When a spec's last task merges: steers the qa-agent toward the risky areas, judges each finding (a bug against the spec, or a gap in the spec), and runs the epic acceptance walkthrough with the PO.</td></tr>
+        <tr><th scope="row">Measure + learn</th><td class="t-old">Reports defect counts</td><td>Owns the escape rate. Each escaped bug is traced to the AC that should have caught it, and the pattern goes to the retro (a spec skill category, a reviewer rule, a new gate).</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="prose muted">In the kit as of 0.2.1 the skills address "the owner" at these points; QA is the person who holds the owner's hat for the AC sign-off and the Verify zone. Naming QA explicitly in the spec and build skills is a candidate for the next kit release.</p>
+</section>
+
+<section id="gates">
+  <div class="eyebrow">Human gates</div>
+  <h2>Gates: what passes, what goes back</h2>
+  <p class="prose">Every gate has a pass condition you can check and a defined place that rejected work returns to. Automated gates in <code>scripts/gates.sh</code> sit underneath the human ones; a human gate never starts while an automated one is red.</p>
+  <div class="scroll" role="region" aria-label="Gate table, scrolls sideways" tabindex="0">
+    <table>
+      <thead><tr><th scope="col">Gate</th><th scope="col">Who</th><th scope="col">Passes when</th><th scope="col">Rejected work goes to</th><th scope="col">Jira effect</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Accept ADR</th><td>Tech lead</td><td>Context, decision, consequences and alternatives are stated; the owner sets <code>accepted</code></td><td>Rewritten, or a different decision recorded</td><td>None (ADRs stay in the repo)</td></tr>
+        <tr><th scope="row">Approve epic</th><td>PO</td><td>Each capability is sized for one spec; success measures are observable</td><td>Another grilling round</td><td>Epic created</td></tr>
+        <tr><th scope="row">Approve spec</th><td>PO + engineer + QA (AC sign-off)</td><td>Open questions empty; every requirement has an AC with a test name; worked numbers hand-checked; ADRs it relies on accepted</td><td>Another grilling round on the open branch of the tree</td><td>Story: Draft to Ready</td></tr>
+        <tr><th scope="row">Approve plan</th><td>Engineer</td><td>Every AC in exactly one slice; seams agreed; each task has blockers and a gate command; spec gaps answered by amendment</td><td>Re-slice; or the spec gets an owner-approved amendment</td><td>Sub-tasks created; Story to Planned</td></tr>
+        <tr><th scope="row">Automated gates</th><td>gates.sh</td><td>References resolve, lint, typecheck, unit, integration, the task's AC have tests</td><td>The implementer, with the output</td><td>Sub-task stays In progress</td></tr>
+        <tr><th scope="row">Merge</th><td>Engineer</td><td>Gates green; each finding fixed or waived with a reason</td><td>The implementer (regenerations +1)</td><td>Sub-task Done, or back to In progress</td></tr>
+        <tr><th scope="row">QA finding</th><td>QA</td><td>Each finding classed as a bug against the spec or a gap in it</td><td>Bug: a fix task. Gap: a proposed spec amendment to its owner</td><td>Bug created, linked to the Story</td></tr>
+        <tr><th scope="row">Retro decisions</th><td>Tech lead</td><td>Every kit-feedback row has a decision</td><td>n/a</td><td>None</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="eyebrow">Data flow</div>
+  <h2>How artifacts feed each other</h2>
+  <p class="prose">Each artifact is the input to the next stage, and the arrows are the only paths information takes. The two loops that matter are the spec amendment (a gap found while planning or building goes back to the spec, through the owner) and the kit loop (problems with the process itself go to the retro, never straight into the kit).</p>
+  <figure>
+    <div class="fig-pane">
+<pre class="mermaid">
+flowchart LR
+  REQ([Request or idea]) -->|grilled| EPIC[Epic doc]
+  EPIC -->|one capability| SPEC[Spec]
+  CTX[Context docs, glossary, ADRs] -->|read by every stage| SPEC
+  SPEC -->|new terms, decisions| CTX
+  SPEC -->|approved| PLAN[Plan + tasks]
+  PLAN -->|one task| BR[Task branch: code + tests]
+  BR -->|gates.sh| GATE{Green?}
+  GATE -->|no, output| BR
+  GATE -->|yes, diff| REV[Review record]
+  REV -->|owner merges| MAIN[(main)]
+  MAIN -->|merge time, findings| MET[metrics/log.csv]
+  PLAN -.->|gap found| AMEND[Spec amendment]
+  BR -.->|spec conflict| AMEND
+  AMEND -.->|owner approves| SPEC
+  MAIN -->|last task| QA[QA findings]
+  QA -.->|spec gap| AMEND
+  QA -->|bug| BUG[Bug issue]
+  BR -.->|process problem| FB[kit-feedback.md]
+  MET --> RETRO[Retro record]
+  FB --> RETRO
+  RETRO -->|kit change| KIT[New sdd-kit release]
+  KIT -.->|adopted at next stage start| CTX
+</pre>
+    </div>
+    <figcaption>Solid arrows are the main path; dotted arrows are the loops. Nothing reaches the spec except through its owner, and nothing reaches the kit except through a retro.</figcaption>
+  </figure>
+</section>
+
+<section id="decisions">
+  <div class="eyebrow">Decision tree</div>
+  <h2>One task, from start to merge</h2>
+  <p class="prose">This is the decision tree the <code>build</code> skill walks for every task. The diamonds are the questions; the orange ones need a person.</p>
+  <figure>
+    <div class="fig-pane">
+<pre class="mermaid">
+flowchart TD
+  S(["/sdd-kit:build Task NNNN-Tn"]) --> V{Plugin newer than .sdd-kit?}
+  V -->|yes| VA{Adopt now?}
+  VA -->|adopt| VM[Apply migration notes, bump stamp]
+  VA -->|defer| VD[Note in kit-feedback]
+  VM --> B
+  VD --> B
+  V -->|no| B{Blockers merged and tree clean?}
+  B -->|no| STOP1[Stop: build the blocker first]
+  B -->|yes| BR[Cut branch, start review record]
+  BR --> IM[implementer: red-green per AC at its seam]
+  IM --> C{Spec conflict, blocking ADR or missing seam?}
+  C -->|yes| ESC[Stop and report]
+  ESC --> OWN{Owner: amend spec, new ADR, or re-plan}
+  OWN --> IM
+  C -->|no| G{Task gate command green?}
+  G -->|no| IM
+  G -->|yes| RV[spec-reviewer + standards-reviewer in parallel]
+  RV --> M{Owner: merge, rework or waive?}
+  M -->|rework| RW[Regenerations +1] --> IM
+  M -->|waive with reason| MG
+  M -->|merge| MG["Merge with --no-ff, task done, metrics row"]
+  MG --> L{Last task of the spec?}
+  L -->|no| E([Next task])
+  L -->|yes| F{Full spec gates green?}
+  F -->|no| IM
+  F -->|yes| SI[Spec Status: implemented]
+  SI --> Q{QA: run qa-agent?}
+  Q -->|no| E2([Spec done])
+  Q -->|yes| QF{QA: each finding, bug or spec gap?}
+  QF -->|bug| BUG[Bug, then a fix task]
+  QF -->|gap| AM[Proposed spec amendment]
+  classDef human fill:#fdf3e4,stroke:#b45309,color:#1c2330
+  class VA,OWN,M,Q,QF human
+</pre>
+    </div>
+    <figcaption>Orange diamonds are human decisions; the rest are checked by the skill or the gates. Every "no" path returns to a named step, so a task never ends in an undefined state.</figcaption>
+  </figure>
+</section>
+
+<section id="jira">
+  <div class="eyebrow">Physical artifacts in Jira</div>
+  <h2>What exists in Jira, and what never goes there</h2>
+  <p class="prose">Jira gets four issue types, each created at a gate and each pointing back to its document. Descriptions summarize and link; they are never edited in Jira, so the repository and Jira cannot disagree about scope. Until a Jira connection exists, the skills list what to create and the owner creates it by hand.</p>
+  <figure>
+    <div class="fig-pane">
+      <svg viewBox="0 0 900 270" role="img" aria-label="Jira hierarchy: one Epic per epic doc, one Story per spec under it, one Sub-task per task under each Story with blocked-by links between sub-tasks, and Bugs linked to Stories.">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+        </defs>
+        <g font-family="IBM Plex Sans, system-ui, sans-serif" font-size="13" fill="currentColor">
+          <rect x="330" y="16" width="240" height="44" rx="5" style="fill:var(--jira-bg);stroke:var(--jira)"/>
+          <text x="450" y="36" text-anchor="middle" font-weight="600" style="fill:var(--jira)">Epic</text>
+          <text x="450" y="52" text-anchor="middle" font-size="11.5">from docs/epics/0001</text>
+
+          <rect x="120" y="100" width="220" height="44" rx="5" style="fill:var(--jira-bg);stroke:var(--jira)"/>
+          <text x="230" y="120" text-anchor="middle" font-weight="600" style="fill:var(--jira)">Story</text>
+          <text x="230" y="136" text-anchor="middle" font-size="11.5">from Spec 0001</text>
+          <rect x="560" y="100" width="220" height="44" rx="5" style="fill:var(--jira-bg);stroke:var(--jira)"/>
+          <text x="670" y="120" text-anchor="middle" font-weight="600" style="fill:var(--jira)">Story</text>
+          <text x="670" y="136" text-anchor="middle" font-size="11.5">from Spec 0002</text>
+          <line x1="410" y1="60" x2="250" y2="98" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar2)"/>
+          <line x1="490" y1="60" x2="650" y2="98" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar2)"/>
+          <text x="450" y="88" text-anchor="middle" font-size="11.5" class="muted">parent of</text>
+
+          <rect x="20" y="190" width="120" height="40" rx="5" style="fill:var(--jira-bg);stroke:var(--jira)"/>
+          <text x="80" y="208" text-anchor="middle" font-weight="600" font-size="12.5" style="fill:var(--jira)">Sub-task T1</text>
+          <text x="80" y="223" text-anchor="middle" font-size="11">Done</text>
+          <rect x="170" y="190" width="120" height="40" rx="5" style="fill:var(--jira-bg);stroke:var(--jira)"/>
+          <text x="230" y="208" text-anchor="middle" font-weight="600" font-size="12.5" style="fill:var(--jira)">Sub-task T2</text>
+          <text x="230" y="223" text-anchor="middle" font-size="11">In review</text>
+          <rect x="320" y="190" width="120" height="40" rx="5" style="fill:var(--jira-bg);stroke:var(--jira)"/>
+          <text x="380" y="208" text-anchor="middle" font-weight="600" font-size="12.5" style="fill:var(--jira)">Sub-task T3</text>
+          <text x="380" y="223" text-anchor="middle" font-size="11">To do</text>
+          <line x1="200" y1="144" x2="90" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar2)"/>
+          <line x1="230" y1="144" x2="230" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar2)"/>
+          <line x1="260" y1="144" x2="370" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar2)"/>
+          <line x1="140" y1="252" x2="166" y2="252" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ar2)" style="stroke:var(--gate)"/>
+          <line x1="80" y1="230" x2="80" y2="252" stroke-width="1.3" stroke-dasharray="4 3" style="stroke:var(--gate)"/>
+          <line x1="80" y1="252" x2="140" y2="252" stroke-width="1.3" stroke-dasharray="4 3" style="stroke:var(--gate)"/>
+          <line x1="230" y1="230" x2="230" y2="250" stroke-width="1.3" stroke-dasharray="4 3" style="stroke:var(--gate)"/>
+          <line x1="230" y1="252" x2="376" y2="252" stroke-width="1.3" stroke-dasharray="4 3" style="stroke:var(--gate)"/>
+          <line x1="380" y1="252" x2="380" y2="234" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ar2)" style="stroke:var(--gate)"/>
+          <text x="470" y="256" font-size="11.5" style="fill:var(--gate)">blocks (from the tasks doc)</text>
+
+          <rect x="650" y="190" width="150" height="40" rx="5" style="fill:var(--jira-bg);stroke:var(--gate)"/>
+          <text x="725" y="208" text-anchor="middle" font-weight="600" font-size="12.5" style="fill:var(--gate)">Bug</text>
+          <text x="725" y="223" text-anchor="middle" font-size="11">QA finding or escape</text>
+          <line x1="700" y1="188" x2="690" y2="146" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ar2)"/>
+          <text x="760" y="170" font-size="11.5" class="muted">relates to</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>One Epic per epic doc, one Story per spec, one Sub-task per task row; Blocked-by links copy the plan's dependency edges. Bugs link to the Story whose spec they test.</figcaption>
+  </figure>
+  <div class="scroll" role="region" aria-label="Jira issue table, scrolls sideways" tabindex="0">
+    <table>
+      <thead><tr><th scope="col">Jira issue</th><th scope="col">Mirrors</th><th scope="col">Created at</th><th scope="col">Description holds</th><th scope="col">Transitions, and what triggers them</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Epic</th><td>docs/epics/NNNN</td><td>Approve epic</td><td>Problem, outcome, success measures, out of scope; link</td><td>Done when all Must stories are done and the acceptance walkthrough passes</td></tr>
+        <tr><th scope="row">Story</th><td>One spec</td><td>Spec drafted</td><td>Intent; AC table as a checklist; link</td><td>Draft to Ready (spec approved), Ready to Planned (plan approved), Planned to Done (spec implemented)</td></tr>
+        <tr><th scope="row">Sub-task</th><td>One task row</td><td>Approve plan</td><td>Slice, covered AC, gate command; Blocked-by links</td><td>In progress (branch cut), In review (gates green), Done (merged), back to In progress (rework)</td></tr>
+        <tr><th scope="row">Bug</th><td>A QA finding or an escaped defect</td><td>QA confirms the finding</td><td>Repro; proposed spec amendment if it is a gap</td><td>Label <code>escaped</code> when found after merge; feeds the escape rate</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="prose muted">Never in Jira: ADRs, the glossary and context docs, plans, review records, metrics and kit feedback. They stay in the repository, where the gates can check them and agents can read them.</p>
+</section>
+
+<section id="old">
+  <div class="eyebrow">Supplanting the original flow</div>
+  <h2>Original stub flow against 0.2.1</h2>
+  <p class="prose">The original flow was <span class="mono">intent -&gt; spec -&gt; plan -&gt; tasks -&gt; implement -&gt; gates -&gt; review -&gt; merge -&gt; metrics</span>, with an agent per stage. The zones are almost the same; what changed is who runs each one and where the human sits.</p>
+  <div class="scroll" role="region" aria-label="Comparison table, scrolls sideways" tabindex="0">
+    <table>
+      <thead><tr><th scope="col">Zone</th><th scope="col">Original stub</th><th scope="col">0.2.1</th><th scope="col">Why it changed</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Foundation</th><td class="t-old">Copy the kit; nothing said how</td><td><code>setup</code> skill interviews, writes context docs and stack ADRs, stamps the version</td><td>The pilot's setup was done by hand from memory</td></tr>
+        <tr><th scope="row">Intent</th><td class="t-old">ticket-agent, straight to a spec</td><td><code>epic</code> skill with the PO, before any spec</td><td>No PO artifact existed; it had to be reconstructed</td></tr>
+        <tr><th scope="row">Specify</th><td class="t-old">ticket-agent writes, questions come back as a list</td><td><code>spec</code> skill grills you, then writes; about 25 AC</td><td>A subagent cannot ask you anything: the first draft had 82 AC and ten open questions, answered in two relayed rounds</td></tr>
+        <tr><th scope="row">Plan</th><td class="t-old">planner agent; tasks by layer</td><td><code>plan</code> skill; vertical slices, agreed seams, per-task gate command</td><td>Layer tasks could not be demoed alone; the AC gate failed on every task but the last</td></tr>
+        <tr><th scope="row">Implement</th><td class="t-old">"write tests from the AC first"</td><td><code>implementer</code> with <code>tdd</code>: one test red, then green, per slice</td><td>All tests first is horizontal slicing</td></tr>
+        <tr><th scope="row">Review</th><td class="t-old">one reviewer agent</td><td>spec-reviewer and standards-reviewer in parallel, reported unmerged</td><td>One axis can hide the other</td></tr>
+        <tr><th scope="row">Merge</th><td class="t-old">human merge; metrics row by the implementer</td><td><code>build</code> runs the merge gate and writes the metrics row at merge</td><td>Review and cycle-time columns are unknown before merge</td></tr>
+        <tr><th scope="row">Verify</th><td class="t-old">qa-agent, timing unstated; no human QA role</td><td>QA steers the qa-agent when a spec's last task merges and decides each finding</td><td>Defined trigger and owner; findings become Bugs or amendments</td></tr>
+        <tr><th scope="row">Measure</th><td class="t-old">metrics/log.csv reviewed weekly</td><td><code>retro</code> skill: metrics plus kit feedback, then a kit release</td><td>Process problems had nowhere to go but straight into the kit</td></tr>
+        <tr><th scope="row">Human gates</th><td class="t-old">Spec, plan, merge</td><td>ADRs, epic, spec (with QA sign-off), plan, merge, QA findings, retro decisions</td><td>ADRs were binding but nobody accepted them</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="status">
+  <div class="eyebrow">Evidence</div>
+  <h2>What the pilot has proven, and what is still design</h2>
+  <div class="status">
+    <div>
+      <span class="pill ok">Exercised on whatif-mcp</span>
+      <ul>
+        <li>Foundation by hand, ADR acceptance gate, references gate</li>
+        <li>Spec written by an agent, split, approved, amended</li>
+        <li>Plan by an agent (0.1 shape), plan approval</li>
+        <li>Task T1: implementer, gates, both reviewers, rework, merge, metrics row</li>
+        <li>Kit feedback, retro decisions, release 0.2.0 and 0.2.1, migration</li>
+      </ul>
+    </div>
+    <div>
+      <span class="pill todo">Designed, not yet run</span>
+      <ul>
+        <li>The stage skills themselves, in a real session (first: <code>/sdd-kit:plan</code> to re-slice T2-T7)</li>
+        <li>Grilling at epic and spec time</li>
+        <li>The version check's adopt-or-defer prompt</li>
+        <li>The QA role in practice: AC sign-off, qa-agent, Bugs, the epic walkthrough</li>
+        <li>Every Jira step: no project or connection yet</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div>

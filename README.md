@@ -18,6 +18,10 @@ setup -> epic -> spec -> plan -> build (per task) -> retro
 | Build | `/sdd-kit:build Task NNNN-Tn` | branch, docs/reviews/NNNN-Tn, metrics row | merge |
 | Retro | `/sdd-kit:retro` | docs/retro/, a new kit version | decide each item |
 
+The human side of the process (roles including QA, gates, artifacts, the data flow, the per-task
+decision tree, and what is created in Jira) is in docs/operating-model.html. Open it in a browser;
+the Mermaid diagrams render only where Mermaid is available (the published artifact view).
+
 ## Skills and agents
 Skills run in the owner's session, so they can ask questions and wait: every stage that needs a
 human is a skill. Agents run in their own context and report back: work that needs no human
