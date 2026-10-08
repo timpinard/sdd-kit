@@ -1,10 +1,11 @@
-# Review NNNN-Tn: <slice>
+# Review NNNN-Tn: <vertical slice>
 - Task: Task NNNN-Tn. Spec: Spec NNNN. Plan: Plan NNNN.
 - Branch:
 - Regenerations: 0
 
 ## Implementer notes
-Decisions taken inside the task, seam questions, anything the reviewers should know.
+Decisions taken inside the task, test boundary questions, how each test not seen red was broken
+on purpose, anything the reviewers should know.
 
 ## Gates
 Command and tail of the output.

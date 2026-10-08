@@ -110,7 +110,7 @@ td.t-old { color: var(--muted); }
 <div class="wrap">
 
 <header>
-  <div class="eyebrow">sdd-kit 0.2.2 &middot; process reference &middot; source: docs/operating-model.html in the sdd-kit repo</div>
+  <div class="eyebrow">sdd-kit 0.3.0 &middot; process reference &middot; source: docs/operating-model.html in the sdd-kit repo</div>
   <h1>sdd-kit Operating Model</h1>
   <p class="lede">Work moves through nine logical zones. In each one a person decides, a skill or an agent does the work, the repository records the result, and Jira mirrors the status. The repository is the source of truth; Jira is a view of it for people who do not read the repo.</p>
   <div class="legend" aria-label="Legend">
@@ -212,7 +212,7 @@ td.t-old { color: var(--muted); }
           <td>Tech lead answers setup questions; accepts or rejects each ADR.<div class="gate"><i class="gate-mark"></i>Accept ADRs</div></td>
           <td>Product owner is grilled on problem, outcome, measures, scope.<div class="gate"><i class="gate-mark"></i>Approve epic</div></td>
           <td>PO and engineer answer the grilling; QA adds failure modes and checks every AC can be tested.<div class="gate"><i class="gate-mark"></i>Approve spec (QA signs off the AC)</div></td>
-          <td>Engineer agrees seams, slice size and blocking edges; QA checks what each seam misses; spec gaps answered.<div class="gate"><i class="gate-mark"></i>Approve plan (+ any spec amendment)</div></td>
+          <td>Engineer agrees test boundaries, vertical slice size and blocking edges; QA checks what each test boundary misses; spec gaps answered.<div class="gate"><i class="gate-mark"></i>Approve plan (+ any spec amendment)</div></td>
           <td>Nobody, unless the implementer stops on a spec conflict or blocking ADR.</td>
           <td>Nobody: both reviews run unattended.</td>
           <td>Engineer reads gate output and both reviews; merges, sends back, or waives with a reason.<div class="gate"><i class="gate-mark"></i>Merge</div></td>
@@ -237,7 +237,7 @@ td.t-old { color: var(--muted); }
           <td class="none">none</td>
           <td>Optional lookups during grilling (facts, never decisions)</td>
           <td class="none">none</td>
-          <td><code>implementer</code>, using <code>tdd</code> at the agreed seams</td>
+          <td><code>implementer</code>, using <code>tdd</code> at the agreed test boundaries</td>
           <td><code>spec-reviewer</code> and <code>standards-reviewer</code>, read-only</td>
           <td><code>implementer</code> again on rework</td>
           <td><code>qa-agent</code>, adversarial, writes nothing to the repo</td>
@@ -251,7 +251,7 @@ td.t-old { color: var(--muted); }
           <td>docs/plans/NNNN, docs/tasks/NNNN; spec <code>Amended:</code> line</td>
           <td>Branch <code>task/NNNN-Tn</code>: code, tests, review record (implementer + gates sections)</td>
           <td>Review record: spec review, standards review (unmerged)</td>
-          <td>Merge commit on main; review record owner decision; task row done; metrics row</td>
+          <td>Merge commit on the integration branch (main by default); review record owner decision; task row done; metrics row</td>
           <td>Spec Status: implemented; proposed amendments</td>
           <td>docs/retro/DATE; kit-feedback decisions; new sdd-kit release (separate repo)</td>
         </tr>
@@ -287,7 +287,7 @@ td.t-old { color: var(--muted); }
     <div class="role h">
       <h3>Engineer</h3>
       <div class="k">Owns</div>
-      <ul><li>Behavior and acceptance criteria in the spec</li><li>Seams, slices and blocking edges in the plan</li><li>Each merge to main</li></ul>
+      <ul><li>Behavior and acceptance criteria in the spec</li><li>Test boundaries, vertical slices and blocking edges in the plan</li><li>Each merge to the integration branch, and from it to main</li></ul>
       <div class="k">Gates</div>
       <ul><li>Approve spec (with the PO and QA), approve plan, merge</li></ul>
     </div>
@@ -310,7 +310,7 @@ td.t-old { color: var(--muted); }
       <div class="k">Do, never decide</div>
       <ul><li><b>implementer</b>: one task on its branch, test-first, until its gate command is green</li><li><b>spec-reviewer</b>: diff against spec and plan</li><li><b>standards-reviewer</b>: diff against conventions and ADRs</li><li><b>qa-agent</b>: tries to break a finished spec</li></ul>
       <div class="k">Stop and report when</div>
-      <ul><li>Spec and code cannot both be right; an ADR blocks; a seam or dependency is missing</li></ul>
+      <ul><li>Spec and code cannot both be right; an ADR blocks; a test boundary or dependency is missing</li></ul>
     </div>
   </div>
 </section>
@@ -324,8 +324,8 @@ td.t-old { color: var(--muted); }
       <thead><tr><th scope="col">Zone</th><th scope="col">Before</th><th scope="col">With sdd-kit</th></tr></thead>
       <tbody>
         <tr><th scope="row">Specify</th><td class="t-old">Receives requirements after they are written</td><td>Sits in the grilling: raises boundaries, bad input, failure modes and error messages, so they become AC instead of later bugs. Signs off that every AC is concrete enough to test (inputs, observable outputs, exact errors) and that worked numbers are hand-checked.</td></tr>
-        <tr><th scope="row">Plan</th><td class="t-old">Writes a test plan from the requirements</td><td>Reviews the seams: for each, what it catches and what it misses. A behavior no seam can observe is raised as a plan gap.</td></tr>
-        <tr><th scope="row">Implement + review</th><td class="t-old">Writes and runs test cases per story</td><td>Nothing per task. The implementer writes the tests; spec-reviewer flags tests that are stubs, tautological or at the wrong seam. QA reads those findings when they recur.</td></tr>
+        <tr><th scope="row">Plan</th><td class="t-old">Writes a test plan from the requirements</td><td>Reviews the test boundaries: for each, what it catches and what it misses. A behavior no test boundary can observe is raised as a plan gap.</td></tr>
+        <tr><th scope="row">Implement + review</th><td class="t-old">Writes and runs test cases per story</td><td>Nothing per task. The implementer writes the tests; spec-reviewer flags tests that are stubs, tautological or at the wrong test boundary. QA reads those findings when they recur.</td></tr>
         <tr><th scope="row">Verify</th><td class="t-old">Regression and exploratory passes before release</td><td>When a spec's last task merges: steers the qa-agent toward the risky areas, judges each finding (a bug against the spec, or a gap in the spec), and runs the epic acceptance walkthrough with the PO.</td></tr>
         <tr><th scope="row">Measure + learn</th><td class="t-old">Reports defect counts</td><td>Owns the escape rate. Each escaped bug is traced to the AC that should have caught it, and the pattern goes to the retro (a spec skill category, a reviewer rule, a new gate).</td></tr>
       </tbody>
@@ -343,10 +343,11 @@ td.t-old { color: var(--muted); }
       <tbody>
         <tr><th scope="row">Accept ADR</th><td>Tech lead</td><td>Context, decision, consequences and alternatives are stated; the owner sets <code>accepted</code></td><td>Rewritten, or a different decision recorded</td><td>None (ADRs stay in the repo)</td></tr>
         <tr><th scope="row">Approve epic</th><td>PO</td><td>Each capability is sized for one spec; success measures are observable</td><td>Another grilling round</td><td>Epic created</td></tr>
-        <tr><th scope="row">Approve spec</th><td>PO + engineer + QA (AC sign-off)</td><td>Open questions empty; every requirement has an AC with a test name; worked numbers hand-checked; ADRs it relies on accepted</td><td>Another grilling round on the open branch of the tree</td><td>Story: Draft to Ready</td></tr>
-        <tr><th scope="row">Approve plan</th><td>Engineer</td><td>Every AC in exactly one slice; seams agreed; each task has blockers and a gate command; spec gaps answered by amendment</td><td>Re-slice; or the spec gets an owner-approved amendment</td><td>Sub-tasks created; Story to Planned</td></tr>
+        <tr><th scope="row">Approve spec</th><td>PO + engineer + QA (AC sign-off)</td><td>Open questions empty; every requirement has an AC with a test prefix; worked numbers hand-checked; ADRs it relies on accepted</td><td>Another grilling round on the open branch of the tree</td><td>Story: Draft to Ready</td></tr>
+        <tr><th scope="row">Approve plan</th><td>Engineer</td><td>Every AC in exactly one vertical slice; test boundaries agreed; each task has blockers and a gate command; spec gaps answered by amendment</td><td>Re-slice; or the spec gets an owner-approved amendment</td><td>Sub-tasks created; Story to Planned</td></tr>
         <tr><th scope="row">Automated gates</th><td>gates.sh</td><td>References resolve, lint, typecheck, unit, integration, the task's AC have tests</td><td>The implementer, with the output</td><td>Sub-task stays In progress</td></tr>
         <tr><th scope="row">Merge</th><td>Engineer</td><td>Gates green; each finding fixed or waived with a reason</td><td>The implementer (regenerations +1)</td><td>Sub-task Done, or back to In progress</td></tr>
+        <tr><th scope="row">Merge to main</th><td>Engineer</td><td>Only when the integration branch is not main: the spec's full gates are green on it</td><td>The spec's last task</td><td>None</td></tr>
         <tr><th scope="row">QA finding</th><td>QA</td><td>Each finding classed as a bug against the spec or a gap in it</td><td>Bug: a fix task. Gap: a proposed spec amendment to its owner</td><td>Bug created, linked to the Story</td></tr>
         <tr><th scope="row">Retro decisions</th><td>Tech lead</td><td>Every kit-feedback row has a decision</td><td>n/a</td><td>None</td></tr>
       </tbody>
@@ -371,7 +372,7 @@ flowchart LR
   BR -->|gates.sh| GATE{Green?}
   GATE -->|no, output| BR
   GATE -->|yes, diff| REV[Review record]
-  REV -->|owner merges| MAIN[(main)]
+  REV -->|owner merges| MAIN[(integration branch)]
   MAIN -->|merge time, findings| MET[metrics/log.csv]
   PLAN -.->|gap found| AMEND[Spec amendment]
   BR -.->|spec conflict| AMEND
@@ -407,8 +408,8 @@ flowchart TD
   V -->|no| B{Blockers merged and tree clean?}
   B -->|no| STOP1[Stop: build the blocker first]
   B -->|yes| BR[Cut branch, start review record]
-  BR --> IM[implementer: red-green per AC at its seam]
-  IM --> C{Spec conflict, blocking ADR or missing seam?}
+  BR --> IM[implementer: red-green per AC at its test boundary]
+  IM --> C{Spec conflict, blocking ADR or missing test boundary?}
   C -->|yes| ESC[Stop and report]
   ESC --> OWN{Owner: amend spec, new ADR, or re-plan}
   OWN --> IM
@@ -418,19 +419,21 @@ flowchart TD
   RV --> M{Owner: merge, rework or waive?}
   M -->|rework| RW[Regenerations +1] --> IM
   M -->|waive with reason| MG
-  M -->|merge| MG["Merge with --no-ff, task done, metrics row"]
+  M -->|merge| MG["Merge into the integration branch with --no-ff, task done, metrics row"]
   MG --> L{Last task of the spec?}
   L -->|no| E([Next task])
   L -->|yes| F{Full spec gates green?}
   F -->|no| IM
   F -->|yes| SI[Spec Status: implemented]
   SI --> Q{QA: run qa-agent?}
+  SI -->|integration branch not main| MM{Owner: merge it to main?}
+  MM -->|yes| MMD[Merge to main with --no-ff]
   Q -->|no| E2([Spec done])
   Q -->|yes| QF{QA: each finding, bug or spec gap?}
   QF -->|bug| BUG[Bug, then a fix task]
   QF -->|gap| AM[Proposed spec amendment]
   classDef human fill:#fdf3e4,stroke:#b45309,color:#1c2330
-  class VA,OWN,M,Q,QF human
+  class VA,OWN,M,Q,QF,MM human
 </pre>
     </div>
     <figcaption>Orange diamonds are human decisions; the rest are checked by the skill or the gates. Every "no" path returns to a named step, so a task never ends in an undefined state.</figcaption>
@@ -498,7 +501,7 @@ flowchart TD
       <tbody>
         <tr><th scope="row">Epic</th><td>docs/epics/NNNN</td><td>Approve epic</td><td>Problem, outcome, success measures, out of scope; link</td><td>Done when all Must stories are done and the acceptance walkthrough passes</td></tr>
         <tr><th scope="row">Story</th><td>One spec</td><td>Spec drafted</td><td>Intent; AC table as a checklist; link</td><td>Draft to Ready (spec approved), Ready to Planned (plan approved), Planned to Done (spec implemented)</td></tr>
-        <tr><th scope="row">Sub-task</th><td>One task row</td><td>Approve plan</td><td>Slice, covered AC, gate command; Blocked-by links</td><td>In progress (branch cut), In review (gates green), Done (merged), back to In progress (rework)</td></tr>
+        <tr><th scope="row">Sub-task</th><td>One task row</td><td>Approve plan</td><td>Vertical slice, covered AC, gate command; Blocked-by links</td><td>In progress (branch cut), In review (gates green), Done (merged), back to In progress (rework)</td></tr>
         <tr><th scope="row">Bug</th><td>A QA finding or an escaped defect</td><td>QA confirms the finding</td><td>Repro; proposed spec amendment if it is a gap</td><td>Label <code>escaped</code> when found after merge; feeds the escape rate</td></tr>
       </tbody>
     </table>
@@ -508,17 +511,17 @@ flowchart TD
 
 <section id="old">
   <div class="eyebrow">Supplanting the original flow</div>
-  <h2>Original stub flow against 0.2.2</h2>
+  <h2>Original stub flow against 0.3.0</h2>
   <p class="prose">The original flow was <span class="mono">intent -&gt; spec -&gt; plan -&gt; tasks -&gt; implement -&gt; gates -&gt; review -&gt; merge -&gt; metrics</span>, with an agent per stage. The zones are almost the same; what changed is who runs each one and where the human sits.</p>
   <div class="scroll" role="region" aria-label="Comparison table, scrolls sideways" tabindex="0">
     <table>
-      <thead><tr><th scope="col">Zone</th><th scope="col">Original stub</th><th scope="col">0.2.2</th><th scope="col">Why it changed</th></tr></thead>
+      <thead><tr><th scope="col">Zone</th><th scope="col">Original stub</th><th scope="col">0.3.0</th><th scope="col">Why it changed</th></tr></thead>
       <tbody>
         <tr><th scope="row">Foundation</th><td class="t-old">Copy the kit; nothing said how</td><td><code>setup</code> skill interviews, writes context docs and stack ADRs, stamps the version</td><td>The pilot's setup was done by hand from memory</td></tr>
         <tr><th scope="row">Intent</th><td class="t-old">ticket-agent, straight to a spec</td><td><code>epic</code> skill with the PO, before any spec</td><td>No PO artifact existed; it had to be reconstructed</td></tr>
         <tr><th scope="row">Specify</th><td class="t-old">ticket-agent writes, questions come back as a list</td><td><code>spec</code> skill grills you, then writes; about 25 AC</td><td>A subagent cannot ask you anything: the first draft had 82 AC and ten open questions, answered in two relayed rounds</td></tr>
-        <tr><th scope="row">Plan</th><td class="t-old">planner agent; tasks by layer</td><td><code>plan</code> skill; vertical slices, agreed seams, per-task gate command</td><td>Layer tasks could not be demoed alone; the AC gate failed on every task but the last</td></tr>
-        <tr><th scope="row">Implement</th><td class="t-old">"write tests from the AC first"</td><td><code>implementer</code> with <code>tdd</code>: one test red, then green, per slice</td><td>All tests first is horizontal slicing</td></tr>
+        <tr><th scope="row">Plan</th><td class="t-old">planner agent; tasks by layer</td><td><code>plan</code> skill; vertical slices, agreed test boundaries, per-task gate command</td><td>Layer tasks could not be demoed alone; the AC gate failed on every task but the last</td></tr>
+        <tr><th scope="row">Implement</th><td class="t-old">"write tests from the AC first"</td><td><code>implementer</code> with <code>tdd</code>: one test red, then green, per cycle</td><td>All tests first is horizontal slicing</td></tr>
         <tr><th scope="row">Review</th><td class="t-old">one reviewer agent</td><td>spec-reviewer and standards-reviewer in parallel, reported unmerged</td><td>One axis can hide the other</td></tr>
         <tr><th scope="row">Merge</th><td class="t-old">human merge; metrics row by the implementer</td><td><code>build</code> runs the merge gate and writes the metrics row at merge</td><td>Review and cycle-time columns are unknown before merge</td></tr>
         <tr><th scope="row">Verify</th><td class="t-old">qa-agent, timing unstated; no human QA role</td><td>QA steers the qa-agent when a spec's last task merges and decides each finding</td><td>Defined trigger and owner; findings become Bugs or amendments</td></tr>

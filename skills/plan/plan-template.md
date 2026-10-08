@@ -5,9 +5,12 @@
 - Jira:
 
 ## Approach
-## Seams (where tests observe behavior; agreed with the owner)
-| Seam | What it catches | What it misses |
-|------|-----------------|----------------|
+## Test boundaries (agreed with the owner)
+A test boundary is the public boundary a test drives the system through and observes results at,
+e.g. a core function, the store, the tool layer over an in-process client.
+
+| Test boundary | What it catches | What it misses |
+|---------------|-----------------|----------------|
 
 ## Components touched
 ## Data / schema changes

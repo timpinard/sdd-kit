@@ -18,10 +18,11 @@ Use the `grilling` skill. Categories to settle (skip any exploration already set
 1. Project paragraph: what it does, for whom.
 2. Stack, runtime dependencies and dev tools: each becomes a proposed ADR (skill `domain-docs`).
 3. Data stores and runtime inputs (clock, env vars, config files).
-4. Conventions: style, naming, error handling, numbers and rounding, test seams, logging.
+4. Conventions: style, naming, error handling, numbers and rounding, test boundaries, logging.
 5. Gate commands: lint, typecheck, unit, integration.
 6. Tracker: Jira, GitHub, local files or none; key format; who moves issues.
-7. Branching, review record, commit identity, whether there is a remote.
+7. Branching (including the integration branch), review record, commit identity, whether there is
+   a remote.
 
 ## 3. Write
 From `project/`, with the decisions filled in:
@@ -31,10 +32,17 @@ From `project/`, with the decisions filled in:
 - `scripts/gates.sh` with the real commands (one per line; `tests_at_level` for test levels)
 - `docs/kit-feedback.md`, `metrics/log.csv`
 - `.sdd-kit` containing this plugin's version
+
+`Integration branch:` in AGENTS.md names the branch task branches are cut from and merged into:
+`main` (the default), a long-lived branch such as `develop`, or `spec`, meaning a per-spec branch
+`spec/NNNN-name` cut from main at the spec's first task. Any branch other than main is merged to main
+at an owner gate when its spec is done (build skill).
+
 Install the plugin for the project if it is not: `claude plugin install sdd-kit@sdd-kit --scope project`.
 That records the plugin in `.claude/settings.json`, but not where its marketplace lives. When the
 sdd-kit repository has a git remote, add it to the same file so any machine can resolve it:
-`"extraKnownMarketplaces": {"sdd-kit": {"source": {"source": "git", "url": "<remote url>"}}}`.
+`"extraKnownMarketplaces": {"sdd-kit": {"source": {"source": "git", "url": "<remote url>"}}}`, for
+example `"extraKnownMarketplaces": {"sdd-kit": {"source": {"source": "git", "url": "https://github.com/timpinard/sdd-kit.git"}}}`.
 Without a remote, commit no local path; add the step
 `claude plugin marketplace add <path to sdd-kit>` to the Setup command in AGENTS.md instead.
 

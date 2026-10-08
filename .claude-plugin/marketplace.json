@@ -1,7 +1,7 @@
 {
   "name": "sdd-kit",
   "owner": { "name": "Timothy Pinard" },
-  "description": "Local marketplace for the sdd-kit plugin.",
+  "description": "Marketplace for the sdd-kit plugin.",
   "plugins": [
     {
       "name": "sdd-kit",

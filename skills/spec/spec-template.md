@@ -15,9 +15,9 @@
 | R1 | |
 
 ## Acceptance criteria (each maps to 1+ test, in tests/test_NNNN_*.py)
-| ID | Given / When / Then | Covers | Level | Test name |
-|----|---------------------|--------|-------|-----------|
-| AC1 | | R1 | unit / integration | test_AC1_... |
+| ID | Given / When / Then | Covers | Level | Test prefix |
+|----|---------------------|--------|-------|-------------|
+| AC1 | | R1 | unit / integration | test_AC1_ |
 
 ## Source behavior (only when porting or replacing existing code)
 ### Kept

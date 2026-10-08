@@ -2,6 +2,47 @@
 Written for adopters. Each entry: what changed, why, and whether to take it
 (recommended = fixes a defect in the process; optional = a new convention).
 
+## v0.3.0 - 2026-10-08
+Source: whatif-mcp retro after Spec 0001 (T2-T10, QA pass).
+- recommended: install from the GitHub remote (`claude plugin marketplace add timpinard/sdd-kit`).
+  A local directory marketplace is read live, so uncommitted kit edits reached projects; use it
+  only while developing the kit. Releases are tagged `sdd-kit--vX.Y.Z`. `setup` gives the
+  `extraKnownMarketplaces` entry for the GitHub remote as its example.
+- recommended: the spec template's AC table column "Test name" becomes "Test prefix", holding
+  `test_ACn_`. One AC may be split across several tests; the gate checks only the prefix.
+- optional: terms. "Seam" becomes "test boundary" and the planning "slice" becomes "vertical
+  slice", each defined on first use; the tdd skill's red-green "slices" become "cycles". README
+  gains a Terms section (test boundary, vertical slice, integration branch, escape).
+- optional: integration branch. AGENTS.md names it (`- Integration branch: main` by default; or a
+  long-lived branch such as `develop`; or `spec` for a per-spec branch `spec/NNNN-name`). Task
+  branches are cut from it, reviewers diff against it, the merge gate merges into it. When it is
+  not main, the spec's last task ends with an owner gate that merges it to main with `--no-ff`.
+- optional: metrics columns `agent_tokens` (implementer and reviewer tokens, rework included) and
+  `owner_wait_hours` (time waiting at owner gates). The retro reads working time (cycle time minus
+  owner wait) and tokens per task. `escaped_to_prod` is clarified: a bug found after the task
+  merged (QA pass or later), traced by QA.
+- recommended: `tdd`: a test that passes on its first run is not yet proven. Break the code on
+  purpose once, watch it fail for the expected reason, restore it, and say how in the review
+  record. `spec-reviewer` checks the record says so for each test not seen red.
+- recommended: spec amendments (from plan or build) have their numbers hand-checked with the
+  calculation shown, as for new AC. No rule on stored data may depend on the current date: a valid
+  stored model would turn invalid with time.
+- recommended: `build` writes the gate output into the review record's Gates section before
+  dispatching the reviewers.
+- optional: `build` cuts the branch in a git worktree beside the repo when another task's build is
+  in progress in the same checkout, and removes it after the merge.
+
+### Migration from 0.2.2
+1. metrics/log.csv: append `agent_tokens,owner_wait_hours` to the header; earlier rows stay blank
+   in those columns.
+2. Add `- Integration branch: main` (or your choice) to AGENTS.md Commands, and update the
+   branching line in docs/context/conventions.md to match.
+3. With the kit installed from GitHub: add `extraKnownMarketplaces` to `.claude/settings.json` (see
+   the setup skill) and drop the local `marketplace add` step from AGENTS.md Setup.
+4. Spec tables of approved specs may keep the "Test name" header; approved plans may keep the old
+   terms.
+5. Write `0.3.0` to `.sdd-kit`.
+
 ## v0.2.2 - 2026-10-07
 - recommended: QA is a named human role. The spec skill brings QA into the grilling (boundaries,
   bad input, failure modes, exact errors) and requires QA's sign-off that every AC is testable

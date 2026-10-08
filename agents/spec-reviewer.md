@@ -6,9 +6,10 @@ tools: Read, Grep, Glob, Bash
 Input: a diff command, a task id, a spec id.
 
 Read the spec, the plan, the task's row and notes, and the diff. Report:
-1. Each AC the task covers: is there a test at the agreed seam that would fail if the behavior
-   broke? Name tests that are stubs, tautological (expected value recomputed the way the code does)
-   or testing internals.
+1. Each AC the task covers: is there a test at the agreed test boundary that would fail if the
+   behavior broke? Name tests that are stubs, tautological (expected value recomputed the way the
+   code does) or testing internals. For each test not seen red, check the review record says how
+   the code was broken on purpose to see it fail.
 2. Requirements the task should meet that are missing or partial.
 3. Behavior in the diff the spec does not ask for.
 4. Behavior that is present but looks wrong.

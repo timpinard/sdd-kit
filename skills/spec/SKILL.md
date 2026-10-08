@@ -30,9 +30,16 @@ Synthesize the settled decisions; ask nothing new while writing.
 - Hand-check every worked number with a calculation you show (Bash or Python), and state which
   values are rounded. A number you cannot check goes to Open questions.
 - About 25 AC at most; split larger capabilities into several specs in dependency order.
+- The AC table's Test prefix is `test_ACn_`. One AC may be split across several tests; the gate
+  checks only the prefix.
 
 ## 4. Gate
 Done when Open questions is empty, QA has signed off that every AC is testable as written
 (concrete inputs, observable outputs, exact errors, hand-checked numbers), and the product owner
 and engineer set Status: approved. `Approved by:` names all three with the date. Then, per
 docs/context/tracker.md, the Story is created or listed for the owner.
+
+## Amendments
+An amendment to an approved spec (from plan step 4 or build step 5) follows the same rules as new
+AC: its numbers are hand-checked with the calculation shown. No rule on stored data may depend on
+the current date: a valid stored model would turn invalid with time.

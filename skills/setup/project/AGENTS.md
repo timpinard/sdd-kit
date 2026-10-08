@@ -16,6 +16,7 @@ QA findings (bug or spec gap).
 ## Commands
 - Setup: `<cmd>` (and the sdd-kit marketplace add, when the kit has no git remote)
 - Gates: `scripts/gates.sh [docs/specs/NNNN-name.md [AC ids...]]`
+- Integration branch: main
 
 ## Rules
 1. No spec, no code. Ask.

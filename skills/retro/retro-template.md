@@ -4,8 +4,8 @@
 - Specs covered:
 
 ## Metrics (from metrics/log.csv)
-| Tasks | First-pass rate | Rework ratio | Review catch rate | Escapes | Median cycle time |
-|-------|-----------------|--------------|-------------------|---------|-------------------|
+| Tasks | First-pass rate | Rework ratio | Review catch rate | Escapes | Median cycle time | Median working time | Tokens per task |
+|-------|-----------------|--------------|-------------------|---------|-------------------|---------------------|-----------------|
 
 ## Decisions
 | Item (kit-feedback row or finding) | Decision: kit change / project only / drop | Change |

@@ -1,12 +1,12 @@
 # sdd-kit
 
 A Claude Code plugin for spec-driven development: the owner settles decisions in grilling sessions,
-specs are written from them, work is planned in thin slices and built test-first by agents, and
-nothing merges without the owner.
+specs are written from them, work is planned in vertical slices and built test-first by agents,
+and nothing merges without the owner.
 
 ```
 setup -> epic -> spec -> plan -> build (per task) -> retro
-          PO      grill    slices   implementer -> gates -> spec-reviewer + standards-reviewer -> merge gate
+          PO      grill    vertical slices   implementer -> gates -> spec-reviewer + standards-reviewer -> merge gate
 ```
 
 | Stage | Started with | Artifact | Human gate |
@@ -31,14 +31,26 @@ human is a skill. Agents run in their own context and report back: work that nee
 - Shared skills (used by stages, or by the model when the task fits): grilling, tdd, domain-docs
 - Agents: implementer, spec-reviewer, standards-reviewer, qa-agent
 
+## Terms
+- Test boundary: the public boundary a test drives the system through and observes results at,
+  e.g. a core function, the store, the tool layer over an in-process client.
+- Vertical slice: a task that cuts thinly through every layer it needs to deliver one behavior a
+  user can see, as opposed to a layer-only task.
+- Integration branch: the branch task branches are cut from and merged into. It is `main` by
+  default; it may be a long-lived branch such as `develop`, or a per-spec branch `spec/NNNN-name`.
+- Escape: a bug found after its task merged, traced by QA to the AC that should have caught it.
+
 ## Install
 ```
-claude plugin marketplace add ~/Workspace/sdd-kit
+claude plugin marketplace add timpinard/sdd-kit
 claude plugin install sdd-kit@sdd-kit --scope project
 ```
 Then `/sdd-kit:setup` in the project. Restart the session after installing or updating.
-A local marketplace path works on this machine only; once the kit has a git remote, setup records it
-in the project's `.claude/settings.json` so other machines resolve it.
+Setup records the marketplace in the project's `.claude/settings.json` so other machines resolve it.
+Releases are tagged `sdd-kit--vX.Y.Z`.
+
+A local directory marketplace (`claude plugin marketplace add <path to sdd-kit>`) is read live:
+uncommitted kit edits reach every project that uses it. Use it only while developing the kit.
 
 ## Versions and change
 The plugin is the reference implementation of the process. A project records the version it
