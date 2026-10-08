@@ -4,6 +4,10 @@ A Claude Code plugin for spec-driven development: the owner settles decisions in
 specs are written from them, work is planned in vertical slices and built test-first by agents,
 and nothing merges without the owner.
 
+Status: experimental. Version 0.x, proven on one pilot project so far (one spec of 34 acceptance
+criteria, 10 tasks, one QA pass, two retros). Expect the process to change between minor versions;
+the CHANGELOG says what changed and how to migrate.
+
 ```
 setup -> epic -> spec -> plan -> build (per task) -> retro
           PO      grill    vertical slices   implementer -> gates -> spec-reviewer + standards-reviewer -> merge gate
