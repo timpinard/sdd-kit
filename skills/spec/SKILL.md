@@ -29,11 +29,17 @@ Synthesize the settled decisions; ask nothing new while writing.
   every AC id in the file).
 - Hand-check every worked number with a calculation you show (Bash or Python), and state which
   values are rounded. A number you cannot check goes to Open questions.
+- Every comparison or equality on rounded values (a change detected, a row listed when it differs)
+  gets one AC whose difference is smaller than the displayed precision (4000.004 against 4000).
 - About 25 AC at most; split larger capabilities into several specs in dependency order.
 - The AC table's Test prefix is `test_ACn_`. One AC may be split across several tests; the gate
   checks only the prefix.
 
-## 4. Gate
+## 4. Probe (optional)
+Dispatch the `qa-agent` with the spec id and `probe`: it reads the spec text, not code, and lists
+behavior the spec does not state. The owners decide each item: a new AC, a non-goal, or nothing.
+
+## 5. Gate
 Done when Open questions is empty, QA has signed off that every AC is testable as written
 (concrete inputs, observable outputs, exact errors, hand-checked numbers), and the product owner
 and engineer set Status: approved. `Approved by:` names all three with the date. Then, per

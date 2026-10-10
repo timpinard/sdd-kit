@@ -2,6 +2,33 @@
 Written for adopters. Each entry: what changed, why, and whether to take it
 (recommended = fixes a defect in the process; optional = a new convention).
 
+## v0.4.0 - 2026-10-10
+Source: whatif-mcp retro after Spec 0002 (T1-T4, QA pass).
+- recommended: `implementer` and `tdd`: break code on purpose with a scratch edit restored by
+  `git checkout -- <path>`, or a scratch commit; never `git stash`. The stash is shared by every
+  worktree of a repo, and dropping it lost a rework in progress.
+- recommended: `spec`: every comparison or equality on rounded values gets one AC whose difference
+  is smaller than the displayed precision. Rounding between steps caused the worst bug in two
+  specs in a row; both times every AC used whole-cent values.
+- optional: `spec` step 4, Probe: before approval, the `qa-agent` in probe mode reads the spec text
+  and lists behavior it does not state; the owners decide each. QA found mostly spec gaps after
+  the build (15 of 18 findings over two specs).
+- optional: metrics column `findings_fixed` (findings the owner sent to rework). First pass stays
+  as defined; the retro reads the fix rate beside it, since every task had one rework round
+  whether it fixed 9 findings or 2.
+- recommended: `build` records each completion notice's token count in the review record, one
+  line per run, and agent_tokens sums them; each notice is taken as the count of its run alone.
+- optional: docs/follow-ups.md. `build` appends findings waived as a separate task and QA
+  findings deferred; the retro reviews the list.
+- recommended: `plan`: the ~400-line task size counts added lines under the source directories,
+  as `git diff --numstat` gives them.
+
+### Migration from 0.3.0
+1. metrics/log.csv: append `,findings_fixed` to the header; earlier rows stay blank in that column.
+2. Create docs/follow-ups.md from `skills/setup/project/follow-ups.md`, and move any open
+   "separate task" findings from review records into it.
+3. Write `0.4.0` to `.sdd-kit`.
+
 ## v0.3.0 - 2026-10-08
 Source: whatif-mcp retro after Spec 0001 (T2-T10, QA pass).
 - recommended: install from the GitHub remote (`claude plugin marketplace add timpinard/sdd-kit`).

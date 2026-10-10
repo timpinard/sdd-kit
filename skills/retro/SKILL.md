@@ -8,7 +8,7 @@ Input: a milestone ("Spec 0001 done") in a project using sdd-kit.
 
 ## 1. Gather
 docs/kit-feedback.md rows without a retro decision, metrics/log.csv since the last retro, review
-records with waived findings, and sessions the owner points to. QA traces each escaped bug to the
+records with waived findings, docs/follow-ups.md, and sessions the owner points to. QA traces each escaped bug to the
 AC that should have caught it. Compute the measures in
 `metrics.md` beside this file.
 

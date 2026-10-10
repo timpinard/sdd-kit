@@ -12,7 +12,7 @@ One cycle at a time:
 2. **Green**: write the least code that passes it. Run the single test file.
 3. Next cycle. Each test responds to what the previous cycle taught you.
 
-A test that passes on its first run is not yet proven. Break the code on purpose once, watch the test fail for the expected reason, restore the code, and say in the review record how you broke it.
+A test that passes on its first run is not yet proven. Break the code on purpose once, watch the test fail for the expected reason, restore the code, and say in the review record how you broke it. Restore with `git checkout -- <path>` or drop a scratch commit; never use `git stash`, which every worktree of the repo shares.
 
 Refactoring belongs to review, not to the loop.
 

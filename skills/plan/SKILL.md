@@ -23,7 +23,8 @@ a behavior no test boundary can observe is a plan gap.
 ## 3. Slice
 Draft **vertical slices**: a vertical slice is a task that cuts thinly through every layer it needs
 to deliver one behavior a user can see, as opposed to a layer-only task. Each is verifiable on its
-own, one session, under ~400 lines of non-test code. The first vertical slice carries any project
+own, one session, under ~400 lines of non-test code
+(added lines under the source directories, as `git diff --numstat` counts them). The first vertical slice carries any project
 setup needed to run gates. Layer-only tasks (all the core first, then all the tools) need a stated
 reason. Every AC lands in exactly one vertical slice. Each gets its blockers and its gate command
 (`scripts/gates.sh <spec> <its AC ids>`); the last one runs the full `scripts/gates.sh <spec>`.

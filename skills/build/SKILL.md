@@ -25,7 +25,8 @@ the start time.
 
 ## 2. Implement
 Dispatch the `implementer` agent with the task id, branch (and worktree path, if any) and review
-record path. When it reports, note the token count in its completion notice and run the task's
+record path. When it reports, record the token count of its completion notice in the review
+record, one line per run (the first run and each rework run), and run the task's
 gate command yourself; a red gate goes back to the implementer with the output. Write the green
 output into the review record's Gates section before step 3.
 
@@ -38,10 +39,12 @@ headings.
 ## 4. Owner gate
 Show the owner the gate output and both reviews. The owner decides: merge, rework, or waive a
 finding with a reason.
-- Rework: send the findings to the implementer, add 1 to Regenerations, back to step 2.
+- Rework: send the findings to the implementer, add 1 to Regenerations and the number of findings
+  sent to findings fixed, back to step 2.
+- Waived as a separate task: append it to docs/follow-ups.md (date, source finding, item).
 - Merge: commit the review record on the branch, merge into the integration branch with `--no-ff`,
   set the task row's Status to done, append the metrics row (columns in `../retro/metrics.md`,
-  including agent_tokens and owner_wait_hours). Remove the task's worktree, if any.
+  including agent_tokens, owner_wait_hours and findings_fixed). Remove the task's worktree, if any.
 
 Done when the branch is merged and the metrics row and task status are committed.
 
@@ -49,9 +52,9 @@ Done when the branch is merged and the metrics row and task status are committed
 Run `scripts/gates.sh <spec>` with no AC list. When green, set the spec's Status: implemented and
 offer QA a `qa-agent` pass, steered to the areas QA names. QA classes each finding: a bug against
 the spec becomes a Bug and a fix task; a gap in the spec becomes a proposed amendment for the
-spec's owners, following the spec skill's Amendments rule. Neither becomes a silent fix. QA then
-runs the epic's acceptance walkthrough with the product owner once the epic's Must specs are
-implemented.
+spec's owners, following the spec skill's Amendments rule. Neither becomes a silent fix. A finding
+QA defers goes to docs/follow-ups.md. QA then runs the epic's acceptance walkthrough with the
+product owner once the epic's Must specs are implemented.
 
 When the integration branch is not main, the task ends with an owner gate after the full gates
 pass: on the owner's yes, merge the integration branch to main with `--no-ff`.

@@ -30,7 +30,7 @@ From `project/`, with the decisions filled in:
 - `docs/context/architecture.md`, `conventions.md`, `glossary.md`, `tracker.md`
 - `docs/adr/0001-adopt-spec-driven-development.md` plus one ADR per stack decision, all `proposed`
 - `scripts/gates.sh` with the real commands (one per line; `tests_at_level` for test levels)
-- `docs/kit-feedback.md`, `metrics/log.csv`
+- `docs/kit-feedback.md`, `docs/follow-ups.md`, `metrics/log.csv`
 - `.sdd-kit` containing this plugin's version
 
 `Integration branch:` in AGENTS.md names the branch task branches are cut from and merged into:

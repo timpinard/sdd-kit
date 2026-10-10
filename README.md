@@ -19,7 +19,7 @@ setup -> epic -> spec -> plan -> build (per task) -> retro
 | Epic | `/sdd-kit:epic` | docs/epics/NNNN | approve epic |
 | Spec | `/sdd-kit:spec` | docs/specs/NNNN | approve spec; QA signs off the AC |
 | Plan | `/sdd-kit:plan` | docs/plans/NNNN, docs/tasks/NNNN | approve plan |
-| Build | `/sdd-kit:build Task NNNN-Tn` | branch, docs/reviews/NNNN-Tn, metrics row | merge; QA decides QA findings |
+| Build | `/sdd-kit:build Task NNNN-Tn` | branch, docs/reviews/NNNN-Tn, metrics row, docs/follow-ups.md | merge; QA decides QA findings |
 | Retro | `/sdd-kit:retro` | docs/retro/, a new kit version | decide each item |
 
 The human side of the process (roles including QA, gates, artifacts, the data flow, the per-task

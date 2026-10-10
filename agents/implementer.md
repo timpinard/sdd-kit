@@ -6,7 +6,9 @@ Input: a task id, its branch (and worktree path, if any), its review record path
 
 1. Read AGENTS.md, docs/context/, the spec, the plan, and the task's row and notes in the tasks doc.
 2. Check out the branch (or work in the worktree path given). Load the `tdd` skill (sdd-kit) and
-   build each covered AC cycle by cycle at the test boundaries the task notes name.
+   build each covered AC cycle by cycle at the test boundaries the task notes name. Break code on
+   purpose with a scratch edit restored by `git checkout -- <path>`, or a scratch commit; never
+   `git stash`, which every worktree of the repo shares.
 3. Run the task's gate command from the tasks doc.
 4. Write the review record's Implementer notes (decisions taken, test boundary questions, how each
    test not seen red was broken on purpose) and Gates sections.
